@@ -68,6 +68,3 @@ export default function Home() {
 );
   
 }
-
-
-

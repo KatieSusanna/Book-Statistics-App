@@ -1,14 +1,20 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function PostItNote({ children }) {
-    const [randomRotation] = useState(() => Math.floor(Math.random() * 31) - 15)
-    const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
-    const [index] = useState(() => Math.floor(Math.random() * colours.length))
-    const [row] = useState(() => Math.floor(Math.random() * 4) + 1)
-    const [column] = useState(() => Math.floor(Math.random() * 4) + 1)
+  
+  const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
+  const [randomRotation, setRandomRotation] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [row, setRow] = useState(1);
+  const [column, setColumn] = useState(1);
 
-    console.log(row, column)
+  useEffect(() => {
+    setRandomRotation(Math.floor(Math.random() * 31) - 15);
+    setIndex(Math.floor(Math.random() * colours.length));
+    setRow(Math.floor(Math.random() * 4) + 1);
+    setColumn(Math.floor(Math.random() * 4) + 1);
+  }, []);
 
   return (
     <div 
