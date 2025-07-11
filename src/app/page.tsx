@@ -26,7 +26,9 @@ export default function Home() {
     
     const allBooks = [...books, newBook]
 
+    
     setBooks(allBooks)
+    setNewBook("")
 
   }
 
@@ -42,23 +44,25 @@ export default function Home() {
   <div>
   <h1>This is my book app</h1>
   <h3> My Favourite books are: </h3>
-  <ol className="flex justify-center gap-4">
-  {books.map((book, index) => (
-    <PostItNote key={index}>{book}</PostItNote>
-  ))}
-</ol>
+ 
 <div>
-<input type ="text" value={newBook} onChange={(e) => setNewBook(e.target.value)} placeholder="type new book here" />
+<input id = "userBook" type ="text" value={newBook} onChange={(e) => setNewBook(e.target.value)} placeholder="type new book here" />
 <button onClick={addBook}> 
   Add new book 
 </button>
 </div>
 
-<br></br>
 <button onClick={removeBook}>
   Remove latest book
 </button>
 <input type="number" onChange={(e) => indexToRemove = parseInt(e.target.value)} />
+<div className = "grid grid-cols-4 grid-rows-4 relative">
+ 
+  {books.map((book, index) => (
+    <PostItNote key={index}>{book}</PostItNote>
+  ))}
+
+</div>
   </div>
 
 );
