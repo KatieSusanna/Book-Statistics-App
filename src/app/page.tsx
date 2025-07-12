@@ -9,37 +9,35 @@ import PostItNote from "./components/PostItNotes";
 
 
 export default function Home() {
+  const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
     "Fourth Wing",
     "A Court of Thorns and Roses"
   ]);
 
-  const [newBook, setNewBook] = useState(""); 
-
- var indexToRemove = 0
-
+  const [postItStyles, setPostItStyles] = useState<{randomRotation:number, randomColour: string, row:number, column:number}[]>([
+  { randomRotation: -10, randomColour: "bg-yellow-200", row: 1, column: 2 },
+  { randomRotation: 8, randomColour: "bg-pink-200", row: 3, column: 4 }
+]);
+  const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
+ 
   
 
-  //this is a books variable that has a starting state of the books that are in there and uses setBooks to update the list 
-
+ 
   function addBook () {
-    
     const allBooks = [...books, newBook]
-
-    
     setBooks(allBooks)
     setNewBook("")
 
+    const randomRotation = Math.floor(Math.random() * 31) - 15;
+    const randomColour = colours[Math.floor(Math.random() * colours.length)];
+    const row = Math.floor(Math.random() * 4) + 1;
+    const column = Math.floor(Math.random() * 4) + 1;
+
+    const allPostItStyles = [...postItStyles, { randomRotation, randomColour, row, column }]
+    setPostItStyles(allPostItStyles)
   }
 
-  function removeBook () {
-    
-    const updatedBooks = books.filter((_, index) => index !== indexToRemove -1  );
-
-    setBooks(updatedBooks)
-  }
-
-  
   return (
   <div>
   <h1>This is my book app</h1>
@@ -52,15 +50,18 @@ export default function Home() {
 </button>
 </div>
 
-<button onClick={removeBook}>
-  Remove latest book
-</button>
-<input type="number" onChange={(e) => indexToRemove = parseInt(e.target.value)} />
 <div className = "grid grid-cols-4 grid-rows-4 relative">
  
-  {books.map((book, index) => (
-    <PostItNote key={index}>{book}</PostItNote>
-  ))}
+  {books.map((book, index) => {
+  
+  return <PostItNote 
+  key={index} 
+  randomRotation={postItStyles[index].randomRotation} 
+  colour={postItStyles[index].randomColour} 
+  row={postItStyles[index].row} 
+  column={postItStyles[index].column}>
+  {book}</PostItNote>
+  })}
 
 </div>
   </div>
