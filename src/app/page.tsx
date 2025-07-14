@@ -54,24 +54,40 @@ export default function Home() {
     const allBooks = [...books, newBook]
     setBooks(allBooks)
     setNewBook("")
-    console.log(allBooks)
+    // console.log(allBooks)
 
     const randomRotation = Math.floor(Math.random() * 31) - 15;
     const randomColour = colours[Math.floor(Math.random() * colours.length)];
-    const position = shuffledGrid[allBooks.length - 1]
+    // const position = shuffledGrid[allBooks.length - 1]
+
+
+   const position = shuffledGrid.find(gridPos => 
+  !postItStyles.some(style => 
+    style.position.row === gridPos.row && 
+    style.position.column === gridPos.column
+    )
+  );
+  if (!position) {
+  console.log("No free grid positions left!");
+  return; 
+  }
 
     const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
+    // console.log(allPostItStyles)
   }
 
   function removeBook (index: number) {
     let allBooks = books
     allBooks = allBooks.filter((_, i) => i !== index)
     setBooks(allBooks)
+    console.log(allBooks)
+
 
     let allPostItStyles = postItStyles
     allPostItStyles = allPostItStyles.filter((_, i) => i !== index)
     setPostItStyles(allPostItStyles)
+    console.log(allPostItStyles)
 
 
   }
@@ -112,3 +128,4 @@ export default function Home() {
 );
   
 }
+
