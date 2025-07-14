@@ -23,6 +23,8 @@ export default function Home() {
       orderedGrid.push({ row, column });
     }
   }
+
+  const [isLoading, setIsLoading] = useState(true);
   
 
   
@@ -31,7 +33,7 @@ export default function Home() {
   const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
 
   useEffect(() => {
-   
+    
     setShuffledGrid([...orderedGrid].sort(() => Math.random() - 0.5));
   }, []);
 
@@ -44,6 +46,8 @@ export default function Home() {
         position: shuffledGrid[i]
       }));
       setPostItStyles(initialPostItStyles);
+      setIsLoading(false)
+      console.log(isLoading)
     }
   }, [shuffledGrid]);  //Dependancy
  
@@ -72,6 +76,27 @@ export default function Home() {
   return; 
   }
 
+// find looks for an item in the list that meets the condition
+// and returns the actual item (or undefined if none found)
+
+// some checks if any item in the array meets the condition
+// and returns true or false
+
+// here it temporarily assigns each value in shuffledGrid to gridPos
+// then the condition checks if there is NOT a Post-it in postItStyles
+// with the same row and column as gridPos
+//
+// it needs to be negated (!) because:
+// - .some() returns true if it finds a match (position taken)
+// - we want a free position, so we flip it (!true → false, !false → true)
+//
+// .find() stops at the first gridPos where the condition is true (position free)
+// and assigns it to position
+//
+// if .find() doesn’t find any free position, it assigns undefined to position
+// that’s why we need the if-statement to check for this and log a message
+
+
     const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
     // console.log(allPostItStyles)
@@ -92,11 +117,11 @@ export default function Home() {
 
   }
 
-    if (postItStyles.length === 0) return <div>Loading...</div>;
+    if (isLoading)  return <div>Loading...</div>;
 
   
   return (
-    
+     
   <div>
   <h1>This is my book app</h1>
   <h3> My Favourite books are: </h3>
@@ -109,7 +134,7 @@ export default function Home() {
 </div>
 
 <div className = "grid grid-cols-4 grid-rows-4 relative">
- 
+
   {books.map((book, index) => {
   
   return <PostItNote 
