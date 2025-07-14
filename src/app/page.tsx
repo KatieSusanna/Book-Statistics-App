@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { useState } from "react"; //react hook that adds a state variable to a component 
+import { useState, useEffect } from "react"; //react hook that adds a state variable to a component 
 //a react hook is getting a function from the react library 
 //the state variable describes the state of the component at a point in time 
 import PostItNote from "./components/PostItNotes";
@@ -15,11 +15,37 @@ export default function Home() {
     "A Court of Thorns and Roses"
   ]);
 
-  const [postItStyles, setPostItStyles] = useState<{randomRotation:number, randomColour: string, row:number, column:number}[]>([
-  { randomRotation: -10, randomColour: "bg-yellow-200", row: 1, column: 2 },
-  { randomRotation: 8, randomColour: "bg-pink-200", row: 3, column: 4 }
-]);
+  let orderedGrid: { row: number; column: number }[] = [];
+
+  for (let row = 1; row < 5; row++ ) {
+    for (let column = 1; column < 5; column++) {
+      let grid = {row: row, column: column};
+      orderedGrid.push({ row, column });
+    }
+  }
+  
+
+  
+  const [shuffledGrid, setShuffledGrid] = useState<{ row: number; column: number }[]>([]);
+  const [postItStyles, setPostItStyles] = useState<{ randomRotation: number, randomColour: string, position: { row: number, column: number } }[]>([]);
   const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
+
+  useEffect(() => {
+   
+    setShuffledGrid([...orderedGrid].sort(() => Math.random() - 0.5));
+  }, []);
+
+  useEffect(() => {
+    
+    if (shuffledGrid.length > 0) {
+      const initialPostItStyles = books.map((_, i) => ({
+        randomRotation: Math.floor(Math.random() * 31) - 15,
+        randomColour: colours[Math.floor(Math.random() * colours.length)],
+        position: shuffledGrid[i]
+      }));
+      setPostItStyles(initialPostItStyles);
+    }
+  }, [shuffledGrid]);  //Dependancy
  
   
 
@@ -28,17 +54,33 @@ export default function Home() {
     const allBooks = [...books, newBook]
     setBooks(allBooks)
     setNewBook("")
+    console.log(allBooks)
 
     const randomRotation = Math.floor(Math.random() * 31) - 15;
     const randomColour = colours[Math.floor(Math.random() * colours.length)];
-    const row = Math.floor(Math.random() * 4) + 1;
-    const column = Math.floor(Math.random() * 4) + 1;
+    const position = shuffledGrid[allBooks.length - 1]
 
-    const allPostItStyles = [...postItStyles, { randomRotation, randomColour, row, column }]
+    const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
   }
 
+  function removeBook (index: number) {
+    let allBooks = books
+    allBooks = allBooks.filter((_, i) => i !== index)
+    setBooks(allBooks)
+
+    let allPostItStyles = postItStyles
+    allPostItStyles = allPostItStyles.filter((_, i) => i !== index)
+    setPostItStyles(allPostItStyles)
+
+
+  }
+
+    if (postItStyles.length === 0) return <div>Loading...</div>;
+
+  
   return (
+    
   <div>
   <h1>This is my book app</h1>
   <h3> My Favourite books are: </h3>
@@ -58,8 +100,9 @@ export default function Home() {
   key={index} 
   randomRotation={postItStyles[index].randomRotation} 
   colour={postItStyles[index].randomColour} 
-  row={postItStyles[index].row} 
-  column={postItStyles[index].column}>
+  row={postItStyles[index].position.row} 
+  column={postItStyles[index].position.column}
+   onDelete={() => removeBook(index)} >
   {book}</PostItNote>
   })}
 

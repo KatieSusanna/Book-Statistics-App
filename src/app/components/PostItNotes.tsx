@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from "react";
+
 
 type PostItNoteProps = {
   children: React.ReactNode;
@@ -7,6 +7,7 @@ type PostItNoteProps = {
   colour: string;
   row: number;
   column: number;
+  onDelete: () => void
 };
 
 export default function PostItNote({
@@ -15,13 +16,16 @@ export default function PostItNote({
   colour,
   row,
   column,
+  onDelete
 }: PostItNoteProps) {
   return (
     <div 
+    onClick={onDelete}
     style={{
     transform: `rotate(${randomRotation}deg)`,
     gridColumnStart: column,
     gridRowStart: row
+    
     }}
 
     className={`w-40 h-40 p-4 ${colour} rounded-md shadow-lg text-center font-semibold`}>
