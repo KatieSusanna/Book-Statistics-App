@@ -6,8 +6,6 @@ import { useState, useEffect } from "react"; //react hook that adds a state vari
 //the state variable describes the state of the component at a point in time 
 import PostItNote from "./components/PostItNotes";
 
-
-
 export default function Home() {
   const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
@@ -26,8 +24,6 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(true);
   
-
-  
   const [shuffledGrid, setShuffledGrid] = useState<{ row: number; column: number }[]>([]);
   const [postItStyles, setPostItStyles] = useState<{ randomRotation: number, randomColour: string, position: { row: number, column: number } }[]>([]);
   const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
@@ -36,33 +32,22 @@ export default function Home() {
     
     setShuffledGrid([...orderedGrid].sort(() => Math.random() - 0.5));
   }, []);
+  //this only runs once after the first render as there are no dependancies 
 
   useEffect(() => {
     
     if (shuffledGrid.length > 0) {
-      const initialPostItStyles = books.map((_, i) => ({
-        randomRotation: Math.floor(Math.random() * 31) - 15,
-        randomColour: colours[Math.floor(Math.random() * colours.length)],
-        position: shuffledGrid[i]
-      }));
-      setPostItStyles(initialPostItStyles);
-      setIsLoading(false)
-      console.log(isLoading)
+     setStyles()
     }
-  }, [shuffledGrid]);  //Dependancy
- 
-  
-
+  }, [shuffledGrid]);  //Dependancy - this will refire every time shuffledgrid is updated
  
   function addBook () {
     const allBooks = [...books, newBook]
     setBooks(allBooks)
     setNewBook("")
-    // console.log(allBooks)
 
     const randomRotation = Math.floor(Math.random() * 31) - 15;
     const randomColour = colours[Math.floor(Math.random() * colours.length)];
-    // const position = shuffledGrid[allBooks.length - 1]
 
 
    const position = shuffledGrid.find(gridPos => 
@@ -74,32 +59,13 @@ export default function Home() {
   if (!position) {
   console.log("No free grid positions left!");
   return; 
+
+  //ensures that no books are added if there is no space 
   }
-
-// find looks for an item in the list that meets the condition
-// and returns the actual item (or undefined if none found)
-
-// some checks if any item in the array meets the condition
-// and returns true or false
-
-// here it temporarily assigns each value in shuffledGrid to gridPos
-// then the condition checks if there is NOT a Post-it in postItStyles
-// with the same row and column as gridPos
-//
-// it needs to be negated (!) because:
-// - .some() returns true if it finds a match (position taken)
-// - we want a free position, so we flip it (!true → false, !false → true)
-//
-// .find() stops at the first gridPos where the condition is true (position free)
-// and assigns it to position
-//
-// if .find() doesn’t find any free position, it assigns undefined to position
-// that’s why we need the if-statement to check for this and log a message
 
 
     const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
-    // console.log(allPostItStyles)
   }
 
   function removeBook (index: number) {
@@ -114,8 +80,27 @@ export default function Home() {
     setPostItStyles(allPostItStyles)
     console.log(allPostItStyles)
 
-
   }
+
+  function reShuffleGrid () {
+
+    const newGrid = ([...shuffledGrid].sort(() => Math.random() - 0.5));
+    setShuffledGrid(newGrid)
+    return(newGrid)
+  }
+
+  function setStyles (grid = shuffledGrid) { 
+     const initialPostItStyles = books.map((_, i) => ({
+        randomRotation: Math.floor(Math.random() * 31) - 15,
+        randomColour: colours[Math.floor(Math.random() * colours.length)],
+        position: grid[i]
+      }));
+      setPostItStyles(initialPostItStyles);
+      setIsLoading(false)
+  }
+  //this uses explicit passing to ensure that the most up to date version of shuffledgrid is used
+  //the first time this is called shuffledgrid may not have updated so it will be using the old version 
+  //grid = shuffledgrid means that if nothing is passed to the function shuffledgrid will be used
 
     if (isLoading)  return <div>Loading...</div>;
 
@@ -131,6 +116,11 @@ export default function Home() {
 <button onClick={addBook}> 
   Add new book 
 </button>
+<br></br>
+<button onClick={() => { 
+  const newGrid = reShuffleGrid();
+  setStyles(newGrid);}}>
+  Shuffle Post it notes</button>
 </div>
 
 <div className = "grid grid-cols-4 grid-rows-4 relative">
@@ -154,3 +144,26 @@ export default function Home() {
   
 }
 
+
+
+
+
+// find looks for an item in the list that meets the condition
+// and returns the actual item (or undefined if none found)
+
+// some checks if any item in the array meets the condition
+// and returns true or false
+
+// here it temporarily assigns each value in shuffledGrid to gridPos
+// then the condition checks if there is NOT a Post-it in postItStyles
+// with the same row and column as gridPos
+//
+// it needs to be negated (!) because:
+// - .some() returns true if it finds a match (position taken)
+// - we want a free position, so we flip it (!true → false, !false → true)
+//
+// .find() stops at the first gridPos where the condition is true (position free)
+// and assigns it to position
+//
+// if .find() doesn’t find any free position, it assigns undefined to position
+// that’s why we need the if-statement to check for this and log a message
