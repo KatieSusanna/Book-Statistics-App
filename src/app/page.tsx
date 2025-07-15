@@ -6,8 +6,6 @@ import { useState, useEffect } from "react"; //react hook that adds a state vari
 //the state variable describes the state of the component at a point in time 
 import PostItNote from "./components/PostItNotes";
 
-
-
 export default function Home() {
   const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
@@ -25,8 +23,6 @@ export default function Home() {
   }
 
   const [isLoading, setIsLoading] = useState(true);
-  
-
   
   const [shuffledGrid, setShuffledGrid] = useState<{ row: number; column: number }[]>([]);
   const [postItStyles, setPostItStyles] = useState<{ randomRotation: number, randomColour: string, position: { row: number, column: number } }[]>([]);
@@ -51,9 +47,6 @@ export default function Home() {
     }
   }, [shuffledGrid]);  //Dependancy
  
-  
-
- 
   function addBook () {
     const allBooks = [...books, newBook]
     setBooks(allBooks)
@@ -75,7 +68,6 @@ export default function Home() {
   console.log("No free grid positions left!");
   return; 
   }
-
 // find looks for an item in the list that meets the condition
 // and returns the actual item (or undefined if none found)
 
@@ -96,7 +88,6 @@ export default function Home() {
 // if .find() doesn’t find any free position, it assigns undefined to position
 // that’s why we need the if-statement to check for this and log a message
 
-
     const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
     // console.log(allPostItStyles)
@@ -113,7 +104,6 @@ export default function Home() {
     allPostItStyles = allPostItStyles.filter((_, i) => i !== index)
     setPostItStyles(allPostItStyles)
     console.log(allPostItStyles)
-
 
   }
 
