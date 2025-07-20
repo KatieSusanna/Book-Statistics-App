@@ -1,9 +1,9 @@
 'use client';
 
 import Image from "next/image";
-import { useState, useEffect } from "react"; //react hook that adds a state variable to a component 
-//a react hook is getting a function from the react library 
-//the state variable describes the state of the component at a point in time 
+import { useState, useEffect } from "react"; 
+// useState: react hook to create a state variable and setter function
+// useEffect: react hook to run side effects (like shuffling) after render
 import PostItNote from "./components/PostItNotes";
 
 export default function Home() {
@@ -63,6 +63,26 @@ export default function Home() {
   //ensures that no books are added if there is no space 
   }
 
+// find looks for an item in the list that meets the condition
+// and returns the actual item (or undefined if none found)
+
+// some checks if any item in the array meets the condition
+// and returns true or false
+
+// here it temporarily assigns each value in shuffledGrid to gridPos
+// then the condition checks if there is NOT a Post-it in postItStyles
+// with the same row and column as gridPos
+//
+// it needs to be negated (!) because:
+// - .some() returns true if it finds a match (position taken)
+// - we want a free position, so we flip it (!true → false, !false → true)
+//
+// .find() stops at the first gridPos where the condition is true (position free)
+// and assigns it to position
+//
+// if .find() doesn’t find any free position, it assigns undefined to position
+// that’s why we need the if-statement to check for this and log a message
+
 
     const allPostItStyles = [...postItStyles, { randomRotation, randomColour, position }]
     setPostItStyles(allPostItStyles)
@@ -72,14 +92,19 @@ export default function Home() {
     let allBooks = books
     allBooks = allBooks.filter((_, i) => i !== index)
     setBooks(allBooks)
-    console.log(allBooks)
+    
 
 
     let allPostItStyles = postItStyles
     allPostItStyles = allPostItStyles.filter((_, i) => i !== index)
     setPostItStyles(allPostItStyles)
-    console.log(allPostItStyles)
+    
 
+  }
+
+  function removeAllBooks () {
+    setBooks([])
+    setPostItStyles([])
   }
 
   function reShuffleGrid () {
@@ -122,6 +147,11 @@ export default function Home() {
   setStyles(newGrid);}}>
   Shuffle Post it notes</button>
 </div>
+<div>
+  <button onClick={removeAllBooks}> 
+    Clear all
+  </button>
+</div>
 
 <div className = "grid grid-cols-4 grid-rows-4 relative">
 
@@ -148,22 +178,3 @@ export default function Home() {
 
 
 
-// find looks for an item in the list that meets the condition
-// and returns the actual item (or undefined if none found)
-
-// some checks if any item in the array meets the condition
-// and returns true or false
-
-// here it temporarily assigns each value in shuffledGrid to gridPos
-// then the condition checks if there is NOT a Post-it in postItStyles
-// with the same row and column as gridPos
-//
-// it needs to be negated (!) because:
-// - .some() returns true if it finds a match (position taken)
-// - we want a free position, so we flip it (!true → false, !false → true)
-//
-// .find() stops at the first gridPos where the condition is true (position free)
-// and assigns it to position
-//
-// if .find() doesn’t find any free position, it assigns undefined to position
-// that’s why we need the if-statement to check for this and log a message
