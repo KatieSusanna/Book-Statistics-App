@@ -10,8 +10,18 @@ export default function Home() {
   const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
    {id: crypto.randomUUID(), title: "Fourth Wing"},
-    {id: crypto.randomUUID(), title: "A Court of Thorns and Roses"}
+    {id: crypto.randomUUID(), title: "A Court of Thorns and Roses"} 
   ]);
+  //These IDs are needed because of a DOM node issue that occured when adding state to the postit notes
+  //When a post it note was deleted its DOM node wasn't deleted with it this didn't cause an issue until state was added
+  //A DOM node stores the state information about a component so when post it note was purely functional it was empty
+  //when state was added it stored information 
+  //because the DOM node wasn't deleted and identification was done on index 
+  //if you had post it 1, 2 and 3 and deleted 2, 3 would then use 2's DOM node
+  //this meant that when all the post it notes were re-rendered when a post it was deleted 
+  //post it 3 would show post it 2's rotation for a second whilst the transformation takes place
+  //because react sees all the information there so can render and rendering is faster than the transformation
+  //with the id's it is able to see that that DOM node is not for that book and it will be deleted.
 
   let orderedGrid: { row: number; column: number }[] = [];
 
