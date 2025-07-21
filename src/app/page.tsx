@@ -9,8 +9,8 @@ import PostItNote from "./components/PostItNotes";
 export default function Home() {
   const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
-    "Fourth Wing",
-    "A Court of Thorns and Roses"
+   {id: crypto.randomUUID(), title: "Fourth Wing"},
+    {id: crypto.randomUUID(), title: "A Court of Thorns and Roses"}
   ]);
 
   let orderedGrid: { row: number; column: number }[] = [];
@@ -42,7 +42,10 @@ export default function Home() {
   }, [shuffledGrid]);  //Dependancy - this will refire every time shuffledgrid is updated
  
   function addBook () {
-    const allBooks = [...books, newBook]
+    const allBooks = [
+  ...books,
+  { id: crypto.randomUUID(), title: newBook }
+];
     setBooks(allBooks)
     setNewBook("")
 
@@ -121,8 +124,9 @@ export default function Home() {
         position: grid[i]
       }));
       setPostItStyles(initialPostItStyles);
-      setIsLoading(false)
+      setIsLoading(false) 
   }
+
   //this uses explicit passing to ensure that the most up to date version of shuffledgrid is used
   //the first time this is called shuffledgrid may not have updated so it will be using the old version 
   //grid = shuffledgrid means that if nothing is passed to the function shuffledgrid will be used
@@ -158,13 +162,13 @@ export default function Home() {
   {books.map((book, index) => {
   
   return <PostItNote 
-  key={index} 
+  key={book.id} 
   randomRotation={postItStyles[index].randomRotation} 
   colour={postItStyles[index].randomColour} 
   row={postItStyles[index].position.row} 
   column={postItStyles[index].position.column}
    onDelete={() => removeBook(index)} >
-  {book}</PostItNote>
+  {book.title}</PostItNote>
   })}
 
 </div>
