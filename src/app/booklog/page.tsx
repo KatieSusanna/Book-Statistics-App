@@ -8,22 +8,41 @@ export default function booktracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
 
-    async function makeSearchQuery () {
+   async function makeSearchQuery() {
+  const query = encodeURIComponent(searchTitle.trim());
+  const apiURL = `https://openlibrary.org/search.json?q=${query}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+  console.log("API URL:", apiURL);
 
-        const query = encodeURIComponent(searchTitle.trim());
-        const apiURL = `https://openlibrary.org/search.json?q=${query}&fields=key,title,author_name,cover_i,number_of_pages_median`
-        console.log("API URL:", apiURL);
+  try {
+    const response = await fetch(apiURL);
+    const searchResult = await response.json(); 
+    console.log(searchResult);
 
-        try {
-            const response = await fetch(apiURL)
-            const searchResult = response.json();
-            console.log(searchResult)
-            return(searchResult) }
-        catch (error) {
-            console.error("Error fetching data:", error);
-            return[]
-            }
-        }
+    const covers = cleanData(searchResult.docs);
+    console.log(covers); 
+
+    return searchResult;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+}
+
+
+        function cleanData(books: any[]) {
+        return books.map((book) => {
+        const cleanedBook = {
+            id: book.key,
+            title: book.title,
+            author: book.author_name?.join(", ") ?? "Unknown",
+            pages: book.number_of_pages_median ?? "Unknown",
+            coverId: book.cover_i ?? null,
+            coverUrl: null 
+        };
+        return cleanedBook;
+    });
+}
+
         
 
     
@@ -35,7 +54,7 @@ export default function booktracker() {
         {/* //logic for api 
 
         //get the booktitle as an input from the user ✅
-        //attatch the booktitle to api call - https://openlibrary.org/search.json?q=<book title>
+        //attatch the booktitle to api call - https://openlibrary.org/search.json?q=<book title> ✅
         //organise information retrieved by api in a book object
         // build the cover api url  */}
 
