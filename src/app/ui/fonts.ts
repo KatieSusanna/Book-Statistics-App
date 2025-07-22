@@ -14,11 +14,12 @@ export const patrickHand = Patrick_Hand({
 
 export const caveat = Caveat({
   subsets: ['latin'],
-  weight: ['400'],
+  weight: '400',
 })
 
 export const fredericka = Fredericka_the_Great({
   subsets: ['latin'],
-  weight: ['400'],
+  weight: '400',
   display: "swap",
+  fallback: ['cursive', 'sans-serif'],
 })
