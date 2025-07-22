@@ -8,7 +8,7 @@ export default function booktracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
 
-   async function makeSearchQuery() {
+async function makeSearchQuery() {
   const query = encodeURIComponent(searchTitle.trim());
   const apiURL = `https://openlibrary.org/search.json?q=${query}&fields=key,title,author_name,cover_i,number_of_pages_median`;
   console.log("API URL:", apiURL);
@@ -16,21 +16,22 @@ export default function booktracker() {
   try {
     const response = await fetch(apiURL);
     const searchResult = await response.json(); 
-    console.log(searchResult);
+    const books = cleanData(searchResult.docs);    
+    getCoverURLs(books)
 
-    const covers = cleanData(searchResult.docs);
-    console.log(covers); 
+    console.log(books)
 
-    return searchResult;
+
+
+    return books;
   } catch (error) {
     console.error("Error fetching data:", error);
     return [];
   }
 }
 
-
-        function cleanData(books: any[]) {
-        return books.map((book) => {
+function cleanData(books: any[]) {
+    return books.map((book) => {
         const cleanedBook = {
             id: book.key,
             title: book.title,
@@ -41,6 +42,16 @@ export default function booktracker() {
         };
         return cleanedBook;
     });
+}
+
+function getCoverURLs(books: any[]) {
+    return books.map((book) => {
+        const coverID = books[0].coverId
+        const coverQuery = `https://covers.openlibrary.org/b/ID/${coverID}-L.jpg`
+        book.coverURL = coverQuery
+
+        
+    })
 }
 
         
