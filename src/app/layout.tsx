@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { LibraryBig } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +24,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
-        {children}
+        <div className="flex flex-col min-h-screen">
+         
+          <header className="bg-violet-200 text-white p-4 h-[100px] shadow-lg">
+           <LibraryBig className="w-[75px] h-[75px]"/> 
+          </header>
+
+          
+          <main className="flex-grow">{children}</main>
+
+         
+          <footer className="text-center text-gray-500 text-sm py-6 border-t mt-8">
+            © 2025 Katie Griffiths. Made with ❤️
+          </footer>
+        </div>
       </body>
     </html>
   );

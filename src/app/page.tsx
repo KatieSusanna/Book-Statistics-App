@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useState, useEffect } from "react"; 
 // useState: react hook to create a state variable and setter function
 // useEffect: react hook to run side effects (like shuffling) after render
-import PostItNote from "./components/PostItNotes";
+import PostItNote from "./ui/components/PostItNotes";
+import {Plus, Trash, Shuffle} from "lucide-react"
+import { patrickHand } from "@/app/ui/fonts";
 
 export default function Home() {
   const [newBook, setNewBook] = useState(""); 
@@ -36,7 +38,7 @@ export default function Home() {
   
   const [shuffledGrid, setShuffledGrid] = useState<{ row: number; column: number }[]>([]);
   const [postItStyles, setPostItStyles] = useState<{ randomRotation: number, randomColour: string, position: { row: number, column: number } }[]>([]);
-  const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-blue-200"];
+  const colours = ["bg-yellow-200", "bg-green-200", "bg-pink-200", "bg-sky-200", "bg-fuchsia-200", "bg-cyan-200", "bg-violet-200"];
 
   useEffect(() => {
     
@@ -55,7 +57,7 @@ export default function Home() {
     const allBooks = [
   ...books,
   { id: crypto.randomUUID(), title: newBook }
-];
+  ];
     setBooks(allBooks)
     setNewBook("")
 
@@ -144,45 +146,68 @@ export default function Home() {
     if (isLoading)  return <div>Loading...</div>;
 
   
-  return (
+return (
      
   <div>
-  <h1>This is my book app</h1>
-  <h3> My Favourite books are: </h3>
- 
-<div>
-<input id = "userBook" type ="text" value={newBook} onChange={(e) => setNewBook(e.target.value)} placeholder="type new book here" />
-<button onClick={addBook}> 
-  Add new book 
-</button>
-<br></br>
-<button onClick={() => { 
-  const newGrid = reShuffleGrid();
-  setStyles(newGrid);}}>
-  Shuffle Post it notes</button>
-</div>
-<div>
-  <button onClick={removeAllBooks}> 
-    Clear all
-  </button>
-</div>
+    
 
-<div className = "grid grid-cols-4 grid-rows-4 relative">
+    <div className="flex flex-col items-left justify-left gap-4 my-8 pl-6">
+      
 
-  {books.map((book, index) => {
-  
-  return <PostItNote 
-  key={book.id} 
-  randomRotation={postItStyles[index].randomRotation} 
-  colour={postItStyles[index].randomColour} 
-  row={postItStyles[index].position.row} 
-  column={postItStyles[index].position.column}
-   onDelete={() => removeBook(index)} >
-  {book.title}</PostItNote>
-  })}
+      
+      <div className="w-[400px] flex items-center space-x-2 space-y-x">
+        <input 
+          id = "userBook" 
+          type ="text" 
+          value={newBook} 
+          onChange={(e) => setNewBook(e.target.value)} 
+          placeholder="Book Title"
+          className={`${patrickHand.className} block w-[400px] p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 text-base focus:ring-blue-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+        />
+        <button   
+          className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}
+          onClick={addBook}> 
+          <Plus className="w-5 h-5" /> 
+        </button>
+      </div>
+      <div className="w-[400px] flex items-center space-x-2 gap-5">
+        <button
+          onClick={() => { 
+          const newGrid = reShuffleGrid();
+          setStyles(newGrid);}}
+          className={`${patrickHand.className} flex items-center space-x-2 bg-cyan-500 hover:bg-cyan-700 rounded-lg text-white text-sm px-2.5 py-2.5`}>
+          <span>Shuffle</span>
+          <Shuffle className="w-6 h-6"/>
+        </button>
+        <button
+          onClick={removeAllBooks}
+          className={`${patrickHand.className} flex items-center space-x-2 bg-violet-500 hover:bg-violet-700 rounded-lg text-white text-sm px-2.5 py-2.5`}> 
+          <span>Clear all</span>
+          <Trash className="w-6 h-6" />
+        </button>
+      
+      </div>
+    </div>
+    
 
-</div>
+    <div className="grid grid-cols-4 grid-rows-4 gap-x-40 mx-auto max-w-fit">
+
+      {books.map((book, index) => {
+    
+      return <PostItNote 
+      key={book.id} 
+      randomRotation={postItStyles[index].randomRotation} 
+      colour={postItStyles[index].randomColour} 
+      row={postItStyles[index].position.row} 
+      column={postItStyles[index].position.column}
+      onDelete={() => removeBook(index)} >
+      {book.title}</PostItNote>
+      })}
+
+    </div>
+     
   </div>
+    
 
 );
   
