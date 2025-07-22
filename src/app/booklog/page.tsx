@@ -17,7 +17,7 @@ async function makeSearchQuery() {
     const response = await fetch(apiURL);
     const searchResult = await response.json(); 
     const books = cleanData(searchResult.docs);    
-    getCoverURLs(books)
+    getCoverUrl(books)
 
     console.log(books)
 
@@ -44,13 +44,11 @@ function cleanData(books: any[]) {
     });
 }
 
-function getCoverURLs(books: any[]) {
+function getCoverUrl(books: any[]) {
     return books.map((book) => {
-        const coverID = books[0].coverId
+        const coverID = book.coverId
         const coverQuery = `https://covers.openlibrary.org/b/ID/${coverID}-L.jpg`
         book.coverURL = coverQuery
-
-        
     })
 }
 
