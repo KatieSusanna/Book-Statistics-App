@@ -1,24 +1,36 @@
 'use client';
 import { useState } from "react";
 import { patrickHand } from "@/app/ui/fonts";
-import { frederickaTheGreat } from "@/app/ui/fonts";
+import { fredericka } from "@/app/ui/fonts";
 import { Plus } from "lucide-react";
 
 export default function booktracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
 
-    function makeSearchQuery () {
+    async function makeSearchQuery () {
 
         const query = encodeURIComponent(searchTitle.trim());
         const apiURL = `https://openlibrary.org/search.json?q=${query}&fields=key,title,author_name,cover_i,number_of_pages_median`
         console.log("API URL:", apiURL);
 
-    }
+        try {
+            const response = await fetch(apiURL)
+            const searchResult = response.json();
+            console.log(searchResult)
+            return(searchResult) }
+        catch (error) {
+            console.error("Error fetching data:", error);
+            return[]
+            }
+        }
+        
+
+    
 
     return (
         <div>
-        <h1 className={`${frederickaTheGreat.className}`}> this is a page for book tracking </h1>
+        <h1 className={`${fredericka.className}`}> this is a page for book tracking </h1>
 
         {/* //logic for api 
 

@@ -17,7 +17,8 @@ export const caveat = Caveat({
   weight: ['400'],
 })
 
-export const frederickaTheGreat = Fredericka_the_Great({
+export const fredericka = Fredericka_the_Great({
   subsets: ['latin'],
-  weight: ['400']
+  weight: ['400'],
+  display: "swap",
 })
