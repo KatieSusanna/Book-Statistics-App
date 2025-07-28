@@ -59,10 +59,15 @@ function cleanData(books: any[]) {
 function getCoverUrl(books: any[]) {
     return books.map((book) => {
         const coverID = book.coverId
-        const coverQuery = `https://covers.openlibrary.org/b/ID/${coverID}-L.jpg`
+        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-L.jpg`
         book.coverUrl = coverQuery
     })
 }
+
+//for clear covers (without stupid stickers) i might be able to pull the edition and make it use the first edition cover
+//might also need to pull the format as i have already seen an audiobook cover
+//need to also make searches link to author name - i can start by telling the user to separate them by "by" 
+//this is needed for books with same titles
 
     return (
         <div>
