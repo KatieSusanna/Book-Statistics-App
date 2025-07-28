@@ -4,9 +4,19 @@ import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
 import { Plus } from "lucide-react";
 
+type Book = {
+    id: string; 
+    title: string; 
+    author: string;
+    pages: string; 
+    coverId: string; 
+    coverUrl: string 
+}
+
 export default function booktracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
+    const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
 
 async function makeSearchQuery() {
   const query = encodeURIComponent(searchTitle.trim());
@@ -17,11 +27,13 @@ async function makeSearchQuery() {
     const response = await fetch(apiURL);
     const searchResult = await response.json(); 
     const books = cleanData(searchResult.docs);    
-    getCoverUrl(books)
-
+    getCoverUrl(books)            
     console.log(books)
 
+    //at some point make these variables in state ✅
+    //it would be a case of declaring the state variable then using the set function and seting it to books
 
+    setBookSearchResults(books)
 
     return books;
   } catch (error) {
@@ -32,13 +44,13 @@ async function makeSearchQuery() {
 
 function cleanData(books: any[]) {
     return books.map((book) => {
-        const cleanedBook = {
-            id: book.key,
-            title: book.title,
-            author: book.author_name?.join(", ") ?? "Unknown",
-            pages: book.number_of_pages_median ?? "Unknown",
-            coverId: book.cover_i ?? null,
-            coverUrl: null 
+        const cleanedBook: Book = {
+            id: String(book.key),
+            title: String(book.title),
+            author: String(book.author_name?.join(", ")) ?? "Unknown",
+            pages: String(book.number_of_pages_median) ?? "Unknown",
+            coverId: String(book.cover_i) ?? "Unknown",
+            coverUrl: ""
         };
         return cleanedBook;
     });
@@ -48,24 +60,13 @@ function getCoverUrl(books: any[]) {
     return books.map((book) => {
         const coverID = book.coverId
         const coverQuery = `https://covers.openlibrary.org/b/ID/${coverID}-L.jpg`
-        book.coverURL = coverQuery
+        book.coverUrl = coverQuery
     })
 }
-
-        
-
-    
 
     return (
         <div>
         <h1 className={`${fredericka.className}`}> this is a page for book tracking </h1>
-
-        {/* //logic for api 
-
-        //get the booktitle as an input from the user ✅
-        //attatch the booktitle to api call - https://openlibrary.org/search.json?q=<book title> ✅
-        //organise information retrieved by api in a book object
-        // build the cover api url  */}
 
         <input 
             id = "userBook" 
@@ -80,6 +81,17 @@ function getCoverUrl(books: any[]) {
             onClick={makeSearchQuery}> 
             <Plus className="w-5 h-5" /> 
         </button>
+
+        
+        {bookSearchResults.length > 0 && (
+        <img src={bookSearchResults[0].coverUrl} alt="Book cover" />
+)}
+
+        <div>
+            
+        </div>
+
+
     </div>
         
     )
