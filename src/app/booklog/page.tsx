@@ -3,6 +3,8 @@ import { useState } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
 import { Plus } from "lucide-react";
+import BookCards from "@/app/ui/components/bookcards";
+
 
 type Book = {
     id: string; 
@@ -74,14 +76,14 @@ function cleanData(books: any[]) {
 function getCoverUrl(books: any[]) {
     return books.map((book) => {
         const coverID = book.coverId
-        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-L.jpg`
+        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
         book.coverUrl = coverQuery
     })
 }
 
 //for clear covers (without stupid stickers) i might be able to pull the edition and make it use the first edition cover
 //might also need to pull the format as i have already seen an audiobook cover
-//need to also make searches link to author name - i can start by telling the user to separate them by "by" 
+//need to also make searches link to author name - i can start by telling the user to separate them by "by" ✅
 //this is needed for books with same titles
 
     return (
@@ -102,10 +104,20 @@ function getCoverUrl(books: any[]) {
             <Plus className="w-5 h-5" /> 
         </button>
 
+{bookSearchResults.length > 0 && (
+        <BookCards
+        title={bookSearchResults[0].title}
+        author={bookSearchResults[0].author}
+        bookCoverUrl={bookSearchResults[0].coverUrl}>
+        </BookCards>
+        )}
+
         
-        {bookSearchResults.length > 0 && (
+        {/* {bookSearchResults.length > 0 && (
         <img src={bookSearchResults[0].coverUrl} alt="Book cover" />
-)}
+)} */}
+
+
 
         <div>
             
