@@ -104,13 +104,14 @@ function getCoverUrl(books: any[]) {
             <Plus className="w-5 h-5" /> 
         </button>
 
-{bookSearchResults.length > 0 && (
-        <BookCards
-        title={bookSearchResults[0].title}
-        author={bookSearchResults[0].author}
-        bookCoverUrl={bookSearchResults[0].coverUrl}>
-        </BookCards>
-        )}
+{bookSearchResults.length > 0 && ( 
+    bookSearchResults.map((book, index) => {
+        return (<BookCards
+        title={bookSearchResults[index].title}
+        author={bookSearchResults[index].author}
+        bookCoverUrl={bookSearchResults[index].coverUrl}>
+        </BookCards> )}
+        ))}
 
         
         {/* {bookSearchResults.length > 0 && (
