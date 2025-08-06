@@ -19,8 +19,23 @@ export default function booktracker() {
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
 
 async function makeSearchQuery() {
-  const query = encodeURIComponent(searchTitle.trim());
-  const apiURL = `https://openlibrary.org/search.json?q=${query}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+
+    let queryTitle = "" 
+    let queryAuthor = ""
+
+  if (searchTitle.toLocaleLowerCase().includes(" by ")) {
+
+     const [title, author] = searchTitle.split(" by ");
+     queryTitle = encodeURIComponent(title.trim());
+     queryAuthor = encodeURIComponent(author.trim()); 
+  }
+  else {
+    queryTitle = encodeURIComponent(searchTitle.trim());
+    queryAuthor = `""`
+  }
+
+  
+  const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
   console.log("API URL:", apiURL);
 
   try {
@@ -31,7 +46,7 @@ async function makeSearchQuery() {
     console.log(books)
 
     //at some point make these variables in state ✅
-    //it would be a case of declaring the state variable then using the set function and seting it to books
+    //it would be a case of declaring the state variable then using the set function and seting it to books ✅
 
     setBookSearchResults(books)
 
