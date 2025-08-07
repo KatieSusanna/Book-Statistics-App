@@ -88,7 +88,7 @@ function getCoverUrl(books: any[]) {
 
     return (
         <div>
-        <h1 className={`${fredericka.className}`}> this is a page for book tracking </h1>
+        <h1 className={`${fredericka.className}`}> this is a page for book search </h1>
 
         <input 
             id = "userBook" 
@@ -103,15 +103,19 @@ function getCoverUrl(books: any[]) {
             onClick={makeSearchQuery}> 
             <Plus className="w-5 h-5" /> 
         </button>
-
-{bookSearchResults.length > 0 && ( 
-    bookSearchResults.map((book, index) => {
-        return (<BookCards
-        title={bookSearchResults[index].title}
-        author={bookSearchResults[index].author}
-        bookCoverUrl={bookSearchResults[index].coverUrl}>
+        
+        <div className={"container m-auto grid grid-cols-3 gap-5"}>
+        {bookSearchResults.length > 0 && ( 
+        bookSearchResults.map((book, index) => {
+            return (<BookCards
+                key={index}
+                title={bookSearchResults[index].title}
+                author={bookSearchResults[index].author}
+                bookCoverUrl={bookSearchResults[index].coverUrl}>
         </BookCards> )}
         ))}
+        </div>
+
 
         
         {/* {bookSearchResults.length > 0 && (
