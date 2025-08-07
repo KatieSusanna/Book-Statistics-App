@@ -15,7 +15,7 @@ type Book = {
     coverUrl: string 
 }
 
-export default function booktracker() {
+export default function BookTracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
@@ -76,7 +76,7 @@ function cleanData(books: any[]) {
 function getCoverUrl(books: any[]) {
     return books.map((book) => {
         const coverID = book.coverId
-        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-L.jpg`
+        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
         book.coverUrl = coverQuery
     })
 }
@@ -89,7 +89,7 @@ function getCoverUrl(books: any[]) {
     return (
         <div className= "space-y-5">
         <h1 className={`${fredericka.className}`}> this is a page for book search </h1>
-        <div className={`flex items-center space-x-2 space-y-x`}>
+        <div className={`flex items-center space-x-2 space-y-2`}>
         <input 
             id = "userBook" 
             type ="text" 
@@ -107,12 +107,12 @@ function getCoverUrl(books: any[]) {
         
         <div className={"container m-auto grid grid-cols-3 gap-5"}>
         {bookSearchResults.length > 0 && ( 
-        bookSearchResults.map((book, index) => {
+        bookSearchResults.map((book) => {
             return (<BookCards
-                key={index}
-                title={bookSearchResults[index].title}
-                author={bookSearchResults[index].author}
-                bookCoverUrl={bookSearchResults[index].coverUrl}>
+                key={book.id}
+                title={book.title}
+                author={book.author}
+                bookCoverUrl={book.coverUrl}>
         </BookCards> )}
         ))}
         </div>
