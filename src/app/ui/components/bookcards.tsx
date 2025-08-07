@@ -12,8 +12,8 @@ type bookAttributes = {
 export default function BookCards ({title, author, bookCoverUrl}: bookAttributes) {
     
          return (
-       <div className = {`w-[400px] h-[200px] p-4 bg-slate-100 rounded-md shadow-lg text-center font-semibold ${caveat.className}`}>
-        <img alt="book cover" width="64" height="104.2" src={`${bookCoverUrl}`} />
+       <div className = {`w-[400px] p-4 bg-slate-100 rounded-md shadow-lg text-center text-lg font-semibold ${caveat.className} flex flex-col items-center mx-auto`}>
+        <img className={`w-[150px] h-[220px] object-cover`} alt="book cover" src={`${bookCoverUrl}`} />
         <h1>{title}</h1>
         <h2>{author}</h2>
         

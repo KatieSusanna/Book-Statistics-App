@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
-import { Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import BookCards from "@/app/ui/components/bookcards";
 
 
@@ -76,7 +76,7 @@ function cleanData(books: any[]) {
 function getCoverUrl(books: any[]) {
     return books.map((book) => {
         const coverID = book.coverId
-        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
+        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-L.jpg`
         book.coverUrl = coverQuery
     })
 }
@@ -87,9 +87,9 @@ function getCoverUrl(books: any[]) {
 //this is needed for books with same titles
 
     return (
-        <div>
+        <div className= "space-y-5">
         <h1 className={`${fredericka.className}`}> this is a page for book search </h1>
-
+        <div className={`flex items-center space-x-2 space-y-x`}>
         <input 
             id = "userBook" 
             type ="text" 
@@ -101,8 +101,9 @@ function getCoverUrl(books: any[]) {
         <button   
             className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}
             onClick={makeSearchQuery}> 
-            <Plus className="w-5 h-5" /> 
+            <Search className="w-5 h-5" /> 
         </button>
+        </div>
         
         <div className={"container m-auto grid grid-cols-3 gap-5"}>
         {bookSearchResults.length > 0 && ( 
