@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
 import { Search } from "lucide-react";
@@ -19,16 +19,25 @@ export default function BookTracker() {
 
     const [searchTitle, setSearchTitle] = useState("")
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
+     useEffect(() => {
+  if (!searchTitle.trim()) return; 
 
-async function makeSearchQuery() {
+  const timeoutId = setTimeout(() => {
+    makeSearchQuery(searchTitle);
+  }, 500);
 
+  return () => clearTimeout(timeoutId); // cleanup old timer
+}, [searchTitle]);
+
+async function makeSearchQuery(title: string) {
+ 
     let queryTitle = "" 
     let queryAuthor = ""
 
-  if (searchTitle.toLocaleLowerCase().includes(" by ")) {
+  if (title.toLocaleLowerCase().includes(" by ")) {
 
-     const [title, author] = searchTitle.split(" by ");
-     queryTitle = encodeURIComponent(title.trim());
+     const [t, author] = title.split(" by ");
+     queryTitle = encodeURIComponent(t.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
   }
   else {
@@ -36,9 +45,20 @@ async function makeSearchQuery() {
     queryAuthor = `""`
   }
 
+
+  //step 1 - create an if block to use each of the different apiURL types depending if there is a by in the author 
+  //step 2 - order by most recent editions 
+  //step 3 - get rid of collections and box sets 
+
+  //how can i filter out crappy results?
   
-  const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+
+  
+//   const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,title,author_name,cover_i,number_of_pages_median`;
   console.log("API URL:", apiURL);
+
+//   https://www.googleapis.com/books/v1/volumes? 
 
   try {
     const response = await fetch(apiURL);
@@ -94,13 +114,17 @@ function getCoverUrl(books: any[]) {
             id = "userBook" 
             type ="text" 
             value={searchTitle} 
-            onChange={(e) => setSearchTitle(e.target.value)} 
+            onChange={(e) => {
+                setSearchTitle(e.target.value);
+                // makeSearchQuery(e.target.value);
+                }}
+ 
             placeholder="Book Title"
             className={`${patrickHand.className} block w-[400px] p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 text-base focus:ring-blue-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 />
         <button   
-            className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}
-            onClick={makeSearchQuery}> 
+            className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}>
+            {/* onClick={makeSearchQuery} */}
             <Search className="w-5 h-5" /> 
         </button>
         </div>
@@ -117,18 +141,13 @@ function getCoverUrl(books: any[]) {
         ))}
         </div>
 
-
-        
         {/* {bookSearchResults.length > 0 && (
         <img src={bookSearchResults[0].coverUrl} alt="Book cover" />
 )} */}
 
-
-
         <div>
             
         </div>
-
 
     </div>
         
