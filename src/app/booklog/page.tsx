@@ -17,6 +17,8 @@ type Book = {
 
 export default function BookTracker() {
 
+    const [isLoading, setIsLoading] = useState(false)
+
     const [searchTitle, setSearchTitle] = useState("")
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
      useEffect(() => {
@@ -34,18 +36,21 @@ async function makeSearchQuery(title: string) {
     let queryTitle = "" 
     let queryAuthor = ""
     let apiURL = ""
+    let authorSearchURL = ""
+    
 
   if (title.toLocaleLowerCase().includes(" by ")) {
 
-     const [t, author] = title.split(" by ");
-     queryTitle = encodeURIComponent(t.trim());
+     const [title, author] = searchTitle.split(" by ");
+     queryTitle = encodeURIComponent(title.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
-     apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&inauthor:${queryAuthor}&maxResults=40&orderBy=relevance`
+     apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&maxResults=40`
+     authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryAuthor}&maxResults=40`
   }
   else {
-    queryTitle = encodeURIComponent(searchTitle.trim());
-    queryAuthor = `""`
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${queryTitle}&maxResults=40&orderBy=relevance`
+    setSearchTitle(encodeURIComponent(searchTitle.trim()));
+   
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTitle}&maxResults=40`
   }
 
 
@@ -58,23 +63,39 @@ async function makeSearchQuery(title: string) {
 
   console.log("API URL:", apiURL);
 
-
+  setIsLoading(true)
   try {
+    
     const response = await fetch(apiURL);
+    
     const searchResult = await response.json(); 
-    const books = cleanData(searchResult.items ?? []); 
+    let books = cleanData(searchResult.items ?? []); 
     // getCoverUrl(books)            
     console.log(books)
 
+    if (authorSearchURL != "") {
+      const authorResponse = await fetch(authorSearchURL)
+      const authorResult = await authorResponse.json();
 
+    }
+
+
+//step 1: add results of both api calls to the same list 
+//step 2: then call clean data
+//step 3: then edit clean data to sort most relevant on top and get rid of repeats 
 
     setBookSearchResults(books)
+  
 
     return books;
   } catch (error) {
     console.error("Error fetching data:", error);
+    
     return [];
+  } finally {
+    setIsLoading(false)
   }
+  
 }
 
 function cleanData(books: any[]): Book[] {
@@ -102,7 +123,7 @@ books.sort((a, b) => {
       title: info.title || "Untitled",
       author: info.authors?.join(", ") || "Unknown",
       pages: info.pageCount?.toString() || "Unknown",
-      coverId: "", // Google Books doesn't use numeric cover IDs
+      coverId: "",
       coverUrl: info.imageLinks?.thumbnail || "",
     };
   });
@@ -116,10 +137,8 @@ books.sort((a, b) => {
 //     })
 // }
 
-//for clear covers (without stupid stickers) i might be able to pull the edition and make it use the first edition cover
-//might also need to pull the format as i have already seen an audiobook cover
-//need to also make searches link to author name - i can start by telling the user to separate them by "by" ✅
-//this is needed for books with same titles
+
+// if (isLoading)  return <div>Loading...</div>;
 
     return (
         <div className= "space-y-5">
