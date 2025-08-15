@@ -44,15 +44,16 @@ async function makeSearchQuery(title: string) {
      const [title, author] = searchTitle.split(" by ");
      queryTitle = encodeURIComponent(title.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
-     apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&maxResults=40`
-     authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}&maxResults=40`
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}+subject:fiction&maxResults=40`;
+    authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}+subject:fiction&maxResults=40`;
+
 
      console.log(authorSearchURL)
   }
   else {
     const search = (encodeURIComponent(searchTitle.trim()));
    
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&maxResults=40`
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&subject:Fiction&maxResults=40`
   }
 
 
@@ -163,6 +164,8 @@ uniqueBooks.sort((a, b) => b.priority - a.priority);
 //add same priority for author 
 //eliminate repeated titles
 //get rid of collections and box sets 
+//get rid of ones that have no cover 
+//eliminate certain categories
 
 
   
