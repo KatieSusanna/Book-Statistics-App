@@ -55,7 +55,8 @@ async function makeSearchQuery(title: string) {
 
   
 //   const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
-const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+// const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,title,author_name,cover_i,number_of_pages_median`;
+const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTitle}`
   console.log("API URL:", apiURL);
 
 //   https://www.googleapis.com/books/v1/volumes? 
@@ -63,8 +64,8 @@ const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,
   try {
     const response = await fetch(apiURL);
     const searchResult = await response.json(); 
-    const books = cleanData(searchResult.docs);    
-    getCoverUrl(books)            
+    const books = cleanData(searchResult.items ?? []); 
+    // getCoverUrl(books)            
     console.log(books)
 
     //at some point make these variables in state ✅
@@ -79,27 +80,27 @@ const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,
   }
 }
 
-function cleanData(books: any[]) {
-    return books.map((book) => {
-        const cleanedBook: Book = {
-            id: String(book.key),
-            title: String(book.title),
-            author: String(book.author_name?.join(", ")) ?? "Unknown",
-            pages: String(book.number_of_pages_median) ?? "Unknown",
-            coverId: String(book.cover_i) ?? "Unknown",
-            coverUrl: ""
-        };
-        return cleanedBook;
-    });
-}
+function cleanData(books: any[]): Book[] {
+  return books.map((book) => {
+    const info = book.volumeInfo || {};
+    return {
+      id: String(book.id),
+      title: info.title || "Untitled",
+      author: info.authors?.join(", ") || "Unknown",
+      pages: info.pageCount?.toString() || "Unknown",
+      coverId: "", // Google Books doesn't use numeric cover IDs
+      coverUrl: info.imageLinks?.thumbnail || "",
+    };
+  });
+} 
 
-function getCoverUrl(books: any[]) {
-    return books.map((book) => {
-        const coverID = book.coverId
-        const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
-        book.coverUrl = coverQuery
-    })
-}
+// function getCoverUrl(books: any[]) {
+//     return books.map((book) => {
+//         const coverID = book.coverId
+//         const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
+//         book.coverUrl = coverQuery
+//     })
+// }
 
 //for clear covers (without stupid stickers) i might be able to pull the edition and make it use the first edition cover
 //might also need to pull the format as i have already seen an audiobook cover
