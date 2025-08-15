@@ -26,23 +26,26 @@ export default function BookTracker() {
     makeSearchQuery(searchTitle);
   }, 500);
 
-  return () => clearTimeout(timeoutId); // cleanup old timer
+  return () => clearTimeout(timeoutId); 
 }, [searchTitle]);
 
 async function makeSearchQuery(title: string) {
  
     let queryTitle = "" 
     let queryAuthor = ""
+    let apiURL = ""
 
   if (title.toLocaleLowerCase().includes(" by ")) {
 
      const [t, author] = title.split(" by ");
      queryTitle = encodeURIComponent(t.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
+     apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&inauthor:${queryAuthor}&maxResults=40&orderBy=relevance`
   }
   else {
     queryTitle = encodeURIComponent(searchTitle.trim());
     queryAuthor = `""`
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${queryTitle}&maxResults=40&orderBy=relevance`
   }
 
 
@@ -53,13 +56,8 @@ async function makeSearchQuery(title: string) {
   //how can i filter out crappy results?
   ``
 
-  
-//   const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
-// const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,title,author_name,cover_i,number_of_pages_median`;
-const apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${searchTitle}&maxResults=40&orderBy=relevance`
   console.log("API URL:", apiURL);
 
-//   https://www.googleapis.com/books/v1/volumes? 
 
   try {
     const response = await fetch(apiURL);
@@ -68,8 +66,7 @@ const apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${searchTi
     // getCoverUrl(books)            
     console.log(books)
 
-    //at some point make these variables in state ✅
-    //it would be a case of declaring the state variable then using the set function and seting it to books ✅
+
 
     setBookSearchResults(books)
 
@@ -97,6 +94,7 @@ books.sort((a, b) => {
 
   return categoryA.localeCompare(categoryB);  
 });
+
   return books.map((book) => {
     const info = book.volumeInfo || {};
     return {
