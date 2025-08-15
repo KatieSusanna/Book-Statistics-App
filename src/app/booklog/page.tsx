@@ -69,20 +69,20 @@ async function makeSearchQuery(title: string) {
     const response = await fetch(apiURL);
     
     const searchResult = await response.json(); 
-    let books = cleanData(searchResult.items ?? []); 
+    let books = searchResult.items ?? []; 
     // getCoverUrl(books)            
     console.log(books)
 
     if (authorSearchURL != "") {
       const authorResponse = await fetch(authorSearchURL)
       const authorResult = await authorResponse.json();
+      books.push(authorResult.items ?? []);
 
     }
-
-
-//step 1: add results of both api calls to the same list 
 //step 2: then call clean data
 //step 3: then edit clean data to sort most relevant on top and get rid of repeats 
+
+    books = cleanData(books)
 
     setBookSearchResults(books)
   
@@ -99,22 +99,8 @@ async function makeSearchQuery(title: string) {
 }
 
 function cleanData(books: any[]): Book[] {
-books.sort((a, b) => {
-  const categoryA = (a.volumeInfo.categories && a.volumeInfo.categories[0]) || '';
-  const categoryB = (b.volumeInfo.categories && b.volumeInfo.categories[0]) || '';
 
   
-  if (!categoryA && categoryB) return 1;
-  if (categoryA && !categoryB) return -1;
-  if (!categoryA && !categoryB) return 0;
-
-  
-  if (categoryA === 'Fiction' && categoryB !== 'Fiction') return -1;
-  if (categoryA !== 'Fiction' && categoryB === 'Fiction') return 1;
-
-
-  return categoryA.localeCompare(categoryB);  
-});
 
   return books.map((book) => {
     const info = book.volumeInfo || {};
