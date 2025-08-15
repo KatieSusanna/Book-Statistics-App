@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
-import { Search } from "lucide-react";
+import { Book, Search } from "lucide-react";
 import BookCards from "@/app/ui/components/bookcards";
 
 
@@ -99,10 +99,17 @@ async function makeSearchQuery(title: string) {
 }
 
 function cleanData(books: any[]): Book[] {
+ let uniqueBooks: any[] = []
+
+books.forEach((book) => { //iterates through the books list 
+  if (!uniqueBooks.some(b => b.id === book.id)) { //checks if there is any book in unique books that has the same id
+    uniqueBooks.push(book); //adds if it doesnt already exist 
+  }
+});
+
 
   
-
-  return books.map((book) => {
+  return uniqueBooks.map((book) => {
     const info = book.volumeInfo || {};
     return {
       id: String(book.id),
