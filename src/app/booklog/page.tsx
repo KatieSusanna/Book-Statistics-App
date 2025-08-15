@@ -51,12 +51,12 @@ async function makeSearchQuery(title: string) {
   //step 3 - get rid of collections and box sets 
 
   //how can i filter out crappy results?
-  
+  ``
 
   
 //   const apiURL = `https://openlibrary.org/search.json?title=${queryTitle}&author=${queryAuthor}&fields=key,title,author_name,cover_i,number_of_pages_median`;
 // const apiURL = `https://openlibrary.org/search.json?q=${searchTitle}&fields=key,title,author_name,cover_i,number_of_pages_median`;
-const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTitle}`
+const apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${searchTitle}&maxResults=40&orderBy=relevance`
   console.log("API URL:", apiURL);
 
 //   https://www.googleapis.com/books/v1/volumes? 
@@ -81,6 +81,22 @@ const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTitle}`
 }
 
 function cleanData(books: any[]): Book[] {
+books.sort((a, b) => {
+  const categoryA = (a.volumeInfo.categories && a.volumeInfo.categories[0]) || '';
+  const categoryB = (b.volumeInfo.categories && b.volumeInfo.categories[0]) || '';
+
+  
+  if (!categoryA && categoryB) return 1;
+  if (categoryA && !categoryB) return -1;
+  if (!categoryA && !categoryB) return 0;
+
+  
+  if (categoryA === 'Fiction' && categoryB !== 'Fiction') return -1;
+  if (categoryA !== 'Fiction' && categoryB === 'Fiction') return 1;
+
+
+  return categoryA.localeCompare(categoryB);  
+});
   return books.map((book) => {
     const info = book.volumeInfo || {};
     return {
