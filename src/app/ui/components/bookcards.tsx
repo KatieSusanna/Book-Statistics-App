@@ -20,7 +20,7 @@ export default function BookCards ({title, author, bookCoverUrl}: bookAttributes
         {transition: "transform 1s ease",}
        }
        className = {`w-[400px] p-4 bg-slate-100 rounded-md text-center text-lg font-semibold ${caveat.className} flex flex-col items-center mx-auto ${isHovered ? "shadow-2xl" : "shadow-lg"}`}>
-        <img className={`w-[150px] h-[220px] object-cover`} alt="book cover" src={`${bookCoverUrl}`} />
+        <img className={`object-cover`} alt="book cover" src={`${bookCoverUrl}`} />
         <h1>{title}</h1>
         <h2>{author}</h2>
         

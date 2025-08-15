@@ -45,21 +45,21 @@ async function makeSearchQuery(title: string) {
      queryTitle = encodeURIComponent(title.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
      apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&maxResults=40`
-     authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryAuthor}&maxResults=40`
+     authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}&maxResults=40`
+
+     console.log(authorSearchURL)
   }
   else {
-    setSearchTitle(encodeURIComponent(searchTitle.trim()));
+    const search = (encodeURIComponent(searchTitle.trim()));
    
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${searchTitle}&maxResults=40`
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&maxResults=40`
   }
 
 
-  //step 1 - create an if block to use each of the different apiURL types depending if there is a by in the author 
-  //step 2 - order by most recent editions 
-  //step 3 - get rid of collections and box sets 
 
-  //how can i filter out crappy results?
-  ``
+
+
+  
 
   console.log("API URL:", apiURL);
 
@@ -71,16 +71,19 @@ async function makeSearchQuery(title: string) {
     const searchResult = await response.json(); 
     let books = searchResult.items ?? []; 
     // getCoverUrl(books)            
-    console.log(books)
+    
 
     if (authorSearchURL != "") {
       const authorResponse = await fetch(authorSearchURL)
       const authorResult = await authorResponse.json();
-      books.push(authorResult.items ?? []);
+      books.push(...(authorResult.items ?? []));
+
+      console.log(books)
 
     }
-//step 2: then call clean data
-//step 3: then edit clean data to sort most relevant on top and get rid of repeats 
+
+
+   
 
     books = cleanData(books)
 
@@ -108,6 +111,60 @@ books.forEach((book) => { //iterates through the books list
 });
 
 
+
+let search = ""
+let searchAuthor = ""
+if (searchTitle.toLocaleLowerCase().includes(" by ")) {
+  const [title, author] = searchTitle.split(" by ");
+  search = (title.trim());
+  searchAuthor = (author.trim());
+} else {
+  search = searchTitle.trim();
+}
+
+console.log(search)
+
+uniqueBooks.forEach(book => {
+ const title = book.volumeInfo?.title?.toLowerCase() || "";
+  
+  if (title === search) {
+    book.priority = 3;
+  } else if (title.startsWith(search)) {
+    book.priority = 2;
+  } else if (title.includes(search)) {
+    book.priority = 1;
+  } else {
+    book.priority = 0;
+  }
+  
+});
+
+if (searchAuthor != "") {
+  uniqueBooks.forEach(book => {
+    const author = book.volumeInfo.authors?.join(", ").toLowerCase() || "";
+
+    console.log(author)
+    console.log(searchAuthor)
+    
+
+    if (author === searchAuthor) {
+      book.priority += 3
+    } else if (author.startsWith(searchAuthor)) {
+      book.priority +=2
+    }
+    console.log(book.priority)
+
+
+})
+}
+
+uniqueBooks.sort((a, b) => b.priority - a.priority);
+
+//add same priority for author 
+//eliminate repeated titles
+//get rid of collections and box sets 
+
+
   
   return uniqueBooks.map((book) => {
     const info = book.volumeInfo || {};
@@ -122,13 +179,6 @@ books.forEach((book) => { //iterates through the books list
   });
 } 
 
-// function getCoverUrl(books: any[]) {
-//     return books.map((book) => {
-//         const coverID = book.coverId
-//         const coverQuery = `https://covers.openlibrary.org/b/id/${coverID}-M.jpg`
-//         book.coverUrl = coverQuery
-//     })
-// }
 
 
 // if (isLoading)  return <div>Loading...</div>;
