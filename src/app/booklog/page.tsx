@@ -183,6 +183,8 @@ console.log(uniqueBooks)
 //if there are no results add in an error message 
 //add in a user error message for api failure 
 //add in a loading screen
+//add a message at the bottom of the screen for end of results ✅
+//when input bar empty - clear search results 
 
 
 
@@ -236,14 +238,12 @@ console.log(uniqueBooks)
                 author={book.author}
                 bookCoverUrl={book.coverUrl}>
         </BookCards> )}
-        ))}
+        ))} 
+         
         </div>
-
-        {/* {bookSearchResults.length > 0 && (
-        <img src={bookSearchResults[0].coverUrl} alt="Book cover" />
-)} */}
-
+      <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
         <div>
+      {/* this is conditional rendering */}
             
         </div>
 
