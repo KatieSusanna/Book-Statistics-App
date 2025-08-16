@@ -83,11 +83,7 @@ async function makeSearchQuery(title: string) {
 
     }
 
-
-   
-
     books = cleanData(books)
-
     setBookSearchResults(books)
   
 
