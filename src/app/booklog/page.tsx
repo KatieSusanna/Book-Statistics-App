@@ -160,12 +160,22 @@ if (searchAuthor != "") {
 }
 
 uniqueBooks.sort((a, b) => b.priority - a.priority);
+uniqueBooks = uniqueBooks.filter(book => !!book.volumeInfo?.imageLinks?.thumbnail)
+uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("box set"))
+uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("bundle"))
+uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("summary"))
 
-//add same priority for author 
-//eliminate repeated titles
-//get rid of collections and box sets 
-//get rid of ones that have no cover 
-//eliminate certain categories
+console.log(uniqueBooks)
+
+//add same priority for author ✅
+//eliminate repeated titles + author combinations 
+//get rid of collections and box sets ✅
+//get rid of ones that have no cover ✅
+//eliminate certain categories - add a filter
+//if there are no results add in an error message 
+//add in a user error message for api failure 
+//add in a loading screen
+
 
 
   
