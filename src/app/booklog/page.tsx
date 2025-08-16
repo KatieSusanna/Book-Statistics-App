@@ -56,12 +56,6 @@ async function makeSearchQuery(title: string) {
     apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&maxResults=40`
   }
 
-
-
-
-
-  
-
   console.log("API URL:", apiURL);
 
   setIsLoading(true)
@@ -101,11 +95,13 @@ async function makeSearchQuery(title: string) {
 function cleanData(books: any[]): Book[] {
  let uniqueBooks: any[] = []
 
-books.forEach((book) => { //iterates through the books list 
-  if (!uniqueBooks.some(b => b.id === book.id)) { //checks if there is any book in unique books that has the same id
-    uniqueBooks.push(book); //adds if it doesnt already exist 
+books.forEach((book) => { 
+  if (!uniqueBooks.some(b => b.id === book.id)) { 
+    uniqueBooks.push(book);  
   }
 });
+
+
 
 
 
@@ -155,6 +151,21 @@ if (searchAuthor != "") {
 })
 }
 
+let seenKeys: string[] = [];
+let filteredBooks: typeof uniqueBooks = [];
+
+uniqueBooks.forEach(book => {
+  const title = book.volumeInfo?.title?.toLowerCase() || "";
+  const author = book.volumeInfo?.authors?.join(", ").toLowerCase() || "";
+  const key = `${title}::${author}`;
+
+  if (!seenKeys.includes(key)) {
+    seenKeys.push(key);        
+    filteredBooks.push(book);  
+  }
+});
+uniqueBooks = filteredBooks
+
 uniqueBooks.sort((a, b) => b.priority - a.priority);
 uniqueBooks = uniqueBooks.filter(book => !!book.volumeInfo?.imageLinks?.thumbnail)
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("set"))
@@ -165,7 +176,7 @@ uniqueBooks = uniqueBooks.filter(book => book.volumeInfo?.categories?.some((cat:
 console.log(uniqueBooks)
 
 //add same priority for author ✅
-//eliminate repeated titles + author combinations 
+//eliminate repeated titles + author combinations ✅
 //get rid of collections and box sets ✅
 //get rid of ones that have no cover ✅
 //eliminate certain categories - add a filter ✅
