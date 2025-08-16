@@ -164,14 +164,15 @@ uniqueBooks = uniqueBooks.filter(book => !!book.volumeInfo?.imageLinks?.thumbnai
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("box set"))
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("bundle"))
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("summary"))
-
+uniqueBooks = uniqueBooks.filter(book => book.volumeInfo?.categories?.some((cat: string) => cat.toLowerCase().includes("fiction")));
+//some means that as long as fiction exists in categories it will pass
 console.log(uniqueBooks)
 
 //add same priority for author ✅
 //eliminate repeated titles + author combinations 
 //get rid of collections and box sets ✅
 //get rid of ones that have no cover ✅
-//eliminate certain categories - add a filter
+//eliminate certain categories - add a filter ✅
 //if there are no results add in an error message 
 //add in a user error message for api failure 
 //add in a loading screen
