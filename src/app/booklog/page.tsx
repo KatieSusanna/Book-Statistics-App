@@ -44,8 +44,8 @@ async function makeSearchQuery(title: string) {
      const [title, author] = searchTitle.split(" by ");
      queryTitle = encodeURIComponent(title.trim());
      queryAuthor = encodeURIComponent(author.trim()); 
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}+subject:fiction&maxResults=40`;
-    authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}+subject:fiction&maxResults=40`;
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&maxResults=40`;
+    authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}&maxResults=40`;
 
 
      console.log(authorSearchURL)
@@ -53,7 +53,7 @@ async function makeSearchQuery(title: string) {
   else {
     const search = (encodeURIComponent(searchTitle.trim()));
    
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&subject:Fiction&maxResults=40`
+    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&maxResults=40`
   }
 
 
@@ -161,7 +161,7 @@ if (searchAuthor != "") {
 
 uniqueBooks.sort((a, b) => b.priority - a.priority);
 uniqueBooks = uniqueBooks.filter(book => !!book.volumeInfo?.imageLinks?.thumbnail)
-uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("box set"))
+uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("set"))
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("bundle"))
 uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("summary"))
 uniqueBooks = uniqueBooks.filter(book => book.volumeInfo?.categories?.some((cat: string) => cat.toLowerCase().includes("fiction")));
