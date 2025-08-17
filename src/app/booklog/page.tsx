@@ -22,6 +22,9 @@ export default function BookTracker() {
     const [searchTitle, setSearchTitle] = useState("")
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
      useEffect(() => {
+      if (searchTitle === "") {
+      setBookSearchResults([])
+    }
   if (!searchTitle.trim()) return; 
 
   const timeoutId = setTimeout(() => {
@@ -186,7 +189,7 @@ console.log(uniqueBooks)
 //add in a user error message for api failure ✅
 //add in a loading screen
 //add a message at the bottom of the screen for end of results ✅
-//when input bar empty - clear search results 
+//when input bar empty - clear search results ✅
 //make it so no results error is only displayed when there is an active search
 
 
