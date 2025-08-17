@@ -20,6 +20,7 @@ export default function BookTracker() {
     const [isLoading, setIsLoading] = useState(false)
 
     const [searchTitle, setSearchTitle] = useState("")
+    const [activeSearch, setActiveSearch] = useState(false)
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
      useEffect(() => {
       if (searchTitle === "") {
@@ -93,8 +94,18 @@ async function makeSearchQuery(title: string) {
     return [];
   } finally {
     setIsLoading(false)
+    
   }
   
+}
+
+function noResultsMessage(value: string) {
+  if (value === "") {
+    setActiveSearch(false)
+  } else {
+    setActiveSearch(true)
+  }
+
 }
 
 function cleanData(books: any[]): Book[] {
@@ -190,7 +201,7 @@ console.log(uniqueBooks)
 //add in a loading screen
 //add a message at the bottom of the screen for end of results ✅
 //when input bar empty - clear search results ✅
-//make it so no results error is only displayed when there is an active search
+//make it so no results error is only displayed when there is an active search ✅
 
 
 
@@ -221,6 +232,8 @@ console.log(uniqueBooks)
             type ="text" 
             value={searchTitle} 
             onChange={(e) => {
+                
+                noResultsMessage(e.target.value);
                 setSearchTitle(e.target.value);
                 // makeSearchQuery(e.target.value);
                 }}
@@ -249,7 +262,7 @@ console.log(uniqueBooks)
           
          
         </div>
-        <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
+        <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && activeSearch && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
         
       <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
         <div>
