@@ -20,8 +20,12 @@ export default function BookTracker() {
     const [isLoading, setIsLoading] = useState(false)
 
     const [searchTitle, setSearchTitle] = useState("")
+    const [activeSearch, setActiveSearch] = useState(false)
     const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
      useEffect(() => {
+      if (searchTitle === "") {
+      setBookSearchResults([])
+    }
   if (!searchTitle.trim()) return; 
 
   const timeoutId = setTimeout(() => {
@@ -63,6 +67,7 @@ async function makeSearchQuery(title: string) {
     
     const response = await fetch(apiURL);
     
+    
     const searchResult = await response.json(); 
     let books = searchResult.items ?? []; 
     // getCoverUrl(books)            
@@ -84,12 +89,23 @@ async function makeSearchQuery(title: string) {
     return books;
   } catch (error) {
     console.error("Error fetching data:", error);
+    alert("Oops... Our bad! Looks like the api failed, please try again!")
     
     return [];
   } finally {
     setIsLoading(false)
+    
   }
   
+}
+
+function noResultsMessage(value: string) {
+  if (value === "") {
+    setActiveSearch(false)
+  } else {
+    setActiveSearch(true)
+  }
+
 }
 
 function cleanData(books: any[]): Book[] {
@@ -180,11 +196,12 @@ console.log(uniqueBooks)
 //get rid of collections and box sets ✅
 //get rid of ones that have no cover ✅
 //eliminate certain categories - add a filter ✅
-//if there are no results add in an error message 
-//add in a user error message for api failure 
-//add in a loading screen
+//if there are no results add in an error message ✅
+//add in a user error message for api failure ✅
+//add in a loading screen ✅
 //add a message at the bottom of the screen for end of results ✅
-//when input bar empty - clear search results 
+//when input bar empty - clear search results ✅
+//make it so no results error is only displayed when there is an active search ✅
 
 
 
@@ -215,6 +232,8 @@ console.log(uniqueBooks)
             type ="text" 
             value={searchTitle} 
             onChange={(e) => {
+                
+                noResultsMessage(e.target.value);
                 setSearchTitle(e.target.value);
                 // makeSearchQuery(e.target.value);
                 }}
@@ -228,7 +247,7 @@ console.log(uniqueBooks)
             <Search className="w-5 h-5" /> 
         </button>
         </div>
-        
+        <div className={`flex items-center justify-center`}> {isLoading && <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current"> </div>} </div>
         <div className={"container m-auto grid grid-cols-3 gap-5"}>
         {bookSearchResults.length > 0 && ( 
         bookSearchResults.map((book) => {
@@ -239,8 +258,16 @@ console.log(uniqueBooks)
                 bookCoverUrl={book.coverUrl}>
         </BookCards> )}
         ))} 
+        
+          
          
         </div>
+
+          
+
+      
+        <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && activeSearch && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
+        
       <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
         <div>
       {/* this is conditional rendering */}
