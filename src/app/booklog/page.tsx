@@ -85,7 +85,7 @@ async function makeSearchQuery(title: string) {
     return books;
   } catch (error) {
     console.error("Error fetching data:", error);
-    alert("Our bad! Looks like the api failed, please try again!")
+    alert("Oops... Our bad! Looks like the api failed, please try again!")
     
     return [];
   } finally {
@@ -182,11 +182,12 @@ console.log(uniqueBooks)
 //get rid of collections and box sets ✅
 //get rid of ones that have no cover ✅
 //eliminate certain categories - add a filter ✅
-//if there are no results add in an error message 
-//add in a user error message for api failure 
+//if there are no results add in an error message ✅
+//add in a user error message for api failure ✅
 //add in a loading screen
 //add a message at the bottom of the screen for end of results ✅
 //when input bar empty - clear search results 
+//make it so no results error is only displayed when there is an active search
 
 
 
@@ -241,8 +242,12 @@ console.log(uniqueBooks)
                 bookCoverUrl={book.coverUrl}>
         </BookCards> )}
         ))} 
+        
+          
          
         </div>
+        <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
+        
       <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
         <div>
       {/* this is conditional rendering */}
