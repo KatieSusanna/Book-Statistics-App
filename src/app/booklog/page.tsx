@@ -198,7 +198,7 @@ console.log(uniqueBooks)
 //eliminate certain categories - add a filter ✅
 //if there are no results add in an error message ✅
 //add in a user error message for api failure ✅
-//add in a loading screen 
+//add in a loading screen ✅
 //add a message at the bottom of the screen for end of results ✅
 //when input bar empty - clear search results ✅
 //make it so no results error is only displayed when there is an active search ✅
