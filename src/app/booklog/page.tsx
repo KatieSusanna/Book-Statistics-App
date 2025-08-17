@@ -198,7 +198,7 @@ console.log(uniqueBooks)
 //eliminate certain categories - add a filter ✅
 //if there are no results add in an error message ✅
 //add in a user error message for api failure ✅
-//add in a loading screen
+//add in a loading screen 
 //add a message at the bottom of the screen for end of results ✅
 //when input bar empty - clear search results ✅
 //make it so no results error is only displayed when there is an active search ✅
@@ -247,7 +247,7 @@ console.log(uniqueBooks)
             <Search className="w-5 h-5" /> 
         </button>
         </div>
-        {/* maybe add some conditional rendering for the loading screen here */}
+        <div className={`flex items-center justify-center`}> {isLoading && <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current"> </div>} </div>
         <div className={"container m-auto grid grid-cols-3 gap-5"}>
         {bookSearchResults.length > 0 && ( 
         bookSearchResults.map((book) => {
@@ -262,6 +262,10 @@ console.log(uniqueBooks)
           
          
         </div>
+
+          
+
+      
         <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && activeSearch && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
         
       <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
