@@ -63,6 +63,7 @@ async function makeSearchQuery(title: string) {
     
     const response = await fetch(apiURL);
     
+    
     const searchResult = await response.json(); 
     let books = searchResult.items ?? []; 
     // getCoverUrl(books)            
@@ -84,6 +85,7 @@ async function makeSearchQuery(title: string) {
     return books;
   } catch (error) {
     console.error("Error fetching data:", error);
+    alert("Our bad! Looks like the api failed, please try again!")
     
     return [];
   } finally {
@@ -228,7 +230,7 @@ console.log(uniqueBooks)
             <Search className="w-5 h-5" /> 
         </button>
         </div>
-        
+        {/* maybe add some conditional rendering for the loading screen here */}
         <div className={"container m-auto grid grid-cols-3 gap-5"}>
         {bookSearchResults.length > 0 && ( 
         bookSearchResults.map((book) => {
