@@ -2,18 +2,13 @@
 import { useState, useEffect } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
-import { Book, Search } from "lucide-react";
+import {Search } from "lucide-react";
 import BookCards from "@/app/ui/components/bookcards";
+import {Book} from "@/app/ui/components/bookInfoPage"
 
 
-type Book = {
-    id: string; 
-    title: string; 
-    author: string;
-    pages: string; 
-    coverId: string; 
-    coverUrl: string 
-}
+
+
 
 export default function BookTracker() {
 
