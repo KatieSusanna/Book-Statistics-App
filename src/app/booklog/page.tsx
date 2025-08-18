@@ -17,7 +17,7 @@ export default function BookTracker() {
   const closeDialog = () => {
     setSelectedBook(null);
     setIsDialogOpen(false);
-  };
+  }; 
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -265,11 +265,9 @@ console.log(uniqueBooks)
                 coverUrl={book.coverUrl}
                 onClick={() => {
                   setSelectedBook(book);
-                  setIsDialogOpen(true);
-      }}
-               >
-        </BookCards> )}
-        ))} 
+                  setIsDialogOpen(true); }} >
+                </BookCards> )}
+                ))} 
         
           
          
@@ -296,3 +294,12 @@ console.log(uniqueBooks)
         
     )
 }
+
+//for popups or dialog boxes with context specific content you need to 
+//start by making a state variable that indicates whether the box is open or not (boolean)
+//make a state variable with the content (ideally as a type object)
+//make a function that is used when the dialog box is closed that makes the content variable null and the open variable false
+
+//if the dialog opens when you click a componant you need to add an onclick variable to that componant (this is usually to the type that is used for the component)
+//when the componant is rendered assign the onclick varaible the set function for each of state variables (the content and the open one) with what you want them to set it to
+//then check if the conditions are right using conditional rendering and render the dialog box 
