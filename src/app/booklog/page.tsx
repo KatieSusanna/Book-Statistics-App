@@ -2,26 +2,29 @@
 import { useState, useEffect } from "react";
 import { patrickHand } from "@/app/ui/fonts";
 import { fredericka } from "@/app/ui/fonts";
-import { Book, Search } from "lucide-react";
+import {Search } from "lucide-react";
 import BookCards from "@/app/ui/components/bookcards";
-
-
-type Book = {
-    id: string; 
-    title: string; 
-    author: string;
-    pages: string; 
-    coverId: string; 
-    coverUrl: string 
-}
+import { bookAttributes } from "@/app/ui/components/bookcards";
+import BookDialog from "@/app/ui/components/bookInfoPage"
 
 export default function BookTracker() {
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<bookAttributes | null>(null);
+
+  
+
+  const closeDialog = () => {
+    setSelectedBook(null);
+    setIsDialogOpen(false);
+  };
 
     const [isLoading, setIsLoading] = useState(false)
 
     const [searchTitle, setSearchTitle] = useState("")
     const [activeSearch, setActiveSearch] = useState(false)
-    const [bookSearchResults, setBookSearchResults] = useState<Book[]>([])
+    
+    const [bookSearchResults, setBookSearchResults] = useState<bookAttributes[]>([])
      useEffect(() => {
       if (searchTitle === "") {
       setBookSearchResults([])
@@ -34,6 +37,9 @@ export default function BookTracker() {
 
   return () => clearTimeout(timeoutId); 
 }, [searchTitle]);
+
+
+
 
 async function makeSearchQuery(title: string) {
  
@@ -108,7 +114,7 @@ function noResultsMessage(value: string) {
 
 }
 
-function cleanData(books: any[]): Book[] {
+function cleanData(books: any[]): bookAttributes[] {
  let uniqueBooks: any[] = []
 
 books.forEach((book) => { 
@@ -243,7 +249,7 @@ console.log(uniqueBooks)
                 />
         <button   
             className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}>
-            {/* onClick={makeSearchQuery} */}
+            
             <Search className="w-5 h-5" /> 
         </button>
         </div>
@@ -255,14 +261,26 @@ console.log(uniqueBooks)
                 key={book.id}
                 title={book.title}
                 author={book.author}
-                bookCoverUrl={book.coverUrl}>
+                pages={book.pages}
+                coverUrl={book.coverUrl}
+                onClick={() => {
+                  setSelectedBook(book);
+                  setIsDialogOpen(true);
+      }}
+               >
         </BookCards> )}
         ))} 
         
           
          
         </div>
-
+        {selectedBook && (
+        <BookDialog
+          isOpen={isDialogOpen}
+          book={selectedBook}
+          onClose={closeDialog}
+        />
+      )}
           
 
       
