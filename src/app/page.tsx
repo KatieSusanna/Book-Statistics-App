@@ -9,6 +9,7 @@ import {Plus, Trash, Shuffle} from "lucide-react"
 import { patrickHand } from "@/app/ui/fonts";
 
 export default function Home() {
+
   const [newBook, setNewBook] = useState(""); 
   const [books, setBooks] = useState([
    {id: crypto.randomUUID(), title: "Fourth Wing"},
