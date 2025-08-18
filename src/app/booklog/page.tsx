@@ -17,7 +17,7 @@ export default function BookTracker() {
   const closeDialog = () => {
     setSelectedBook(null);
     setIsDialogOpen(false);
-  };
+  }; 
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -197,17 +197,7 @@ uniqueBooks = uniqueBooks.filter(book => book.volumeInfo?.categories?.some((cat:
 //some means that as long as fiction exists in categories it will pass
 console.log(uniqueBooks)
 
-//add same priority for author ✅
-//eliminate repeated titles + author combinations ✅
-//get rid of collections and box sets ✅
-//get rid of ones that have no cover ✅
-//eliminate certain categories - add a filter ✅
-//if there are no results add in an error message ✅
-//add in a user error message for api failure ✅
-//add in a loading screen ✅
-//add a message at the bottom of the screen for end of results ✅
-//when input bar empty - clear search results ✅
-//make it so no results error is only displayed when there is an active search ✅
+
 
 
 
@@ -265,11 +255,9 @@ console.log(uniqueBooks)
                 coverUrl={book.coverUrl}
                 onClick={() => {
                   setSelectedBook(book);
-                  setIsDialogOpen(true);
-      }}
-               >
-        </BookCards> )}
-        ))} 
+                  setIsDialogOpen(true); }} >
+                </BookCards> )}
+                ))} 
         
           
          
@@ -296,3 +284,13 @@ console.log(uniqueBooks)
         
     )
 }
+
+//for popups or dialog boxes with context specific content you need to 
+//start by making a state variable that indicates whether the box is open or not (boolean)
+//make a state variable with the content (ideally as a type object)
+//make a function that is used when the dialog box is closed that makes the content variable null and the open variable false
+
+//if the dialog opens when you click a componant you need to add an onclick variable to that componant (this is usually to the type that is used for the component)
+//when the componant is rendered assign the onclick varaible the set function for each of state variables (the content and the open one) with what you want them to set it to
+//then check if the conditions are right using conditional rendering and render the dialog box 
+
