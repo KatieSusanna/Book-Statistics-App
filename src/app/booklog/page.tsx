@@ -12,10 +12,7 @@ export default function BookTracker() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<bookAttributes | null>(null);
 
-  const openDialog = (book: bookAttributes) => {
-    setSelectedBook(book);
-    setIsDialogOpen(true);
-  };
+  
 
   const closeDialog = () => {
     setSelectedBook(null);
@@ -252,7 +249,7 @@ console.log(uniqueBooks)
                 />
         <button   
             className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}>
-            {/* onClick={makeSearchQuery} */}
+            
             <Search className="w-5 h-5" /> 
         </button>
         </div>
