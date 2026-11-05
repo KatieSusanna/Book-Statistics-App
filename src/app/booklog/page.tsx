@@ -1,296 +1,54 @@
-'use client';
-import { useState, useEffect } from "react";
-import { patrickHand } from "@/app/ui/fonts";
-import { fredericka } from "@/app/ui/fonts";
-import {Search } from "lucide-react";
-import BookCards from "@/app/ui/components/bookcards";
-import { bookAttributes } from "@/app/ui/components/bookcards";
-import BookDialog from "@/app/ui/components/bookInfoPage"
+"use client";
+
+import { FormEvent, useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
+import BookCards, { bookAttributes } from "@/app/ui/components/bookcards";
+import BookDialog from "@/app/ui/components/bookInfoPage";
 
 export default function BookTracker() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<bookAttributes[]>([]);
+  const [selected, setSelected] = useState<bookAttributes | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<bookAttributes | null>(null);
+  useEffect(() => {
+    const cleanQuery = query.trim();
+    if (!cleanQuery) { setResults([]); setError(""); setLoading(false); return; }
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch(`/api/books?q=${encodeURIComponent(cleanQuery)}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Search is temporarily unavailable. Please try again.");
+        const data = await response.json();
+        setResults(data.books ?? []);
+      } catch (cause) {
+        if (cause instanceof Error && cause.name !== "AbortError") { setError(cause.message); setResults([]); }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, 350);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [query]);
 
-  
+  function submitSearch(event: FormEvent<HTMLFormElement>) { event.preventDefault(); }
 
-  const closeDialog = () => {
-    setSelectedBook(null);
-    setIsDialogOpen(false);
-  }; 
-
-    const [isLoading, setIsLoading] = useState(false)
-
-    const [searchTitle, setSearchTitle] = useState("")
-    const [activeSearch, setActiveSearch] = useState(false)
-    
-    const [bookSearchResults, setBookSearchResults] = useState<bookAttributes[]>([])
-     useEffect(() => {
-      if (searchTitle === "") {
-      setBookSearchResults([])
-    }
-  if (!searchTitle.trim()) return; 
-
-  const timeoutId = setTimeout(() => {
-    makeSearchQuery(searchTitle);
-  }, 500);
-
-  return () => clearTimeout(timeoutId); 
-}, [searchTitle]);
-
-
-
-
-async function makeSearchQuery(title: string) {
- 
-    let queryTitle = "" 
-    let queryAuthor = ""
-    let apiURL = ""
-    let authorSearchURL = ""
-    
-
-  if (title.toLocaleLowerCase().includes(" by ")) {
-
-     const [title, author] = searchTitle.split(" by ");
-     queryTitle = encodeURIComponent(title.trim());
-     queryAuthor = encodeURIComponent(author.trim()); 
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=intitle:${queryTitle}&maxResults=40`;
-    authorSearchURL = `https://www.googleapis.com/books/v1/volumes?q=inauthor:${queryAuthor}&maxResults=40`;
-
-
-     console.log(authorSearchURL)
-  }
-  else {
-    const search = (encodeURIComponent(searchTitle.trim()));
-   
-    apiURL = `https://www.googleapis.com/books/v1/volumes?q=${search}&maxResults=40`
-  }
-
-  console.log("API URL:", apiURL);
-
-  setIsLoading(true)
-  try {
-    
-    const response = await fetch(apiURL);
-    
-    
-    const searchResult = await response.json(); 
-    let books = searchResult.items ?? []; 
-    // getCoverUrl(books)            
-    
-
-    if (authorSearchURL != "") {
-      const authorResponse = await fetch(authorSearchURL)
-      const authorResult = await authorResponse.json();
-      books.push(...(authorResult.items ?? []));
-
-      console.log(books)
-
-    }
-
-    books = cleanData(books)
-    setBookSearchResults(books)
-  
-
-    return books;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    alert("Oops... Our bad! Looks like the api failed, please try again!")
-    
-    return [];
-  } finally {
-    setIsLoading(false)
-    
-  }
-  
+  return <main className="workspace search-page">
+    <section className="welcome-row">
+      <div><p className="eyebrow">DISCOVER YOUR NEXT READ</p><h1>Find a book worth getting lost in.</h1><p className="welcome-copy">Search the catalogue by title, author, or both.</p></div>
+    </section>
+    <section className="board-panel search-panel">
+      <form className="search-form" onSubmit={submitSearch}>
+        <Search size={19} aria-hidden="true" />
+        <label className="sr-only" htmlFor="book-search">Search books</label>
+        <input id="book-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Try “The Night Circus” or “Dune by Frank Herbert”" />
+        {query && <button className="clear-search" type="button" aria-label="Clear search" onClick={() => setQuery("")}><X size={17} /></button>}
+      </form>
+      <div className="results-heading"><h2>{query ? "Search results" : "A little inspiration"}</h2>{loading && <span className="loading-label">Searching…</span>}</div>
+      {error ? <p className="search-state" role="alert">{error}</p> : results.length ? <div className="results-grid">{results.map((book) => <BookCards key={book.id} {...book} onClick={() => setSelected(book)} />)}</div> : <div className="search-state">{loading ? "Finding books for you…" : query ? "No matching books yet. Try a different title or author." : "Search for a title or author to get started."}</div>}
+    </section>
+    {selected && <BookDialog isOpen book={selected} onClose={() => setSelected(null)} />}
+  </main>;
 }
-
-function noResultsMessage(value: string) {
-  if (value === "") {
-    setActiveSearch(false)
-  } else {
-    setActiveSearch(true)
-  }
-
-}
-
-function cleanData(books: any[]): bookAttributes[] {
- let uniqueBooks: any[] = []
-
-books.forEach((book) => { 
-  if (!uniqueBooks.some(b => b.id === book.id)) { 
-    uniqueBooks.push(book);  
-  }
-});
-
-
-
-
-
-let search = ""
-let searchAuthor = ""
-if (searchTitle.toLocaleLowerCase().includes(" by ")) {
-  const [title, author] = searchTitle.split(" by ");
-  search = (title.trim());
-  searchAuthor = (author.trim());
-} else {
-  search = searchTitle.trim();
-}
-
-console.log(search)
-
-uniqueBooks.forEach(book => {
- const title = book.volumeInfo?.title?.toLowerCase() || "";
-  
-  if (title === search) {
-    book.priority = 3;
-  } else if (title.startsWith(search)) {
-    book.priority = 2;
-  } else if (title.includes(search)) {
-    book.priority = 1;
-  } else {
-    book.priority = 0;
-  }
-  
-});
-
-if (searchAuthor != "") {
-  uniqueBooks.forEach(book => {
-    const author = book.volumeInfo.authors?.join(", ").toLowerCase() || "";
-
-    console.log(author)
-    console.log(searchAuthor)
-    
-
-    if (author === searchAuthor) {
-      book.priority += 3
-    } else if (author.startsWith(searchAuthor)) {
-      book.priority +=2
-    }
-    console.log(book.priority)
-
-
-})
-}
-
-let seenKeys: string[] = [];
-let filteredBooks: typeof uniqueBooks = [];
-
-uniqueBooks.forEach(book => {
-  const title = book.volumeInfo?.title?.toLowerCase() || "";
-  const author = book.volumeInfo?.authors?.join(", ").toLowerCase() || "";
-  const key = `${title}::${author}`;
-
-  if (!seenKeys.includes(key)) {
-    seenKeys.push(key);        
-    filteredBooks.push(book);  
-  }
-});
-uniqueBooks = filteredBooks
-
-uniqueBooks.sort((a, b) => b.priority - a.priority);
-uniqueBooks = uniqueBooks.filter(book => !!book.volumeInfo?.imageLinks?.thumbnail)
-uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("set"))
-uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("bundle"))
-uniqueBooks = uniqueBooks.filter(book => !(book.volumeInfo?.title?.toLowerCase()).includes("summary"))
-uniqueBooks = uniqueBooks.filter(book => book.volumeInfo?.categories?.some((cat: string) => cat.toLowerCase().includes("fiction")));
-//some means that as long as fiction exists in categories it will pass
-console.log(uniqueBooks)
-
-
-
-
-
-  
-  return uniqueBooks.map((book) => {
-    const info = book.volumeInfo || {};
-    return {
-      id: String(book.id),
-      title: info.title || "Untitled",
-      author: info.authors?.join(", ") || "Unknown",
-      pages: info.pageCount?.toString() || "Unknown",
-      coverId: "",
-      coverUrl: info.imageLinks?.thumbnail || "",
-    };
-  });
-} 
-
-
-
-// if (isLoading)  return <div>Loading...</div>;
-
-    return (
-        <div className= "space-y-5">
-        <h1 className={`${fredericka.className}`}> this is a page for book search </h1>
-        <div className={`flex items-center space-x-2 space-y-2`}>
-        <input 
-            id = "userBook" 
-            type ="text" 
-            value={searchTitle} 
-            onChange={(e) => {
-                
-                noResultsMessage(e.target.value);
-                setSearchTitle(e.target.value);
-                // makeSearchQuery(e.target.value);
-                }}
- 
-            placeholder="Book Title"
-            className={`${patrickHand.className} block w-[400px] p-4 text-gray-900 border border-gray-300 rounded-xl bg-gray-50 text-base focus:ring-blue-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                />
-        <button   
-            className ={`bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-2 rounded-full aspect-square`}>
-            
-            <Search className="w-5 h-5" /> 
-        </button>
-        </div>
-        <div className={`flex items-center justify-center`}> {isLoading && <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-current"> </div>} </div>
-        <div className={"container m-auto grid grid-cols-3 gap-5"}>
-        {bookSearchResults.length > 0 && ( 
-        bookSearchResults.map((book) => {
-            return (<BookCards
-                key={book.id}
-                title={book.title}
-                author={book.author}
-                pages={book.pages}
-                coverUrl={book.coverUrl}
-                onClick={() => {
-                  setSelectedBook(book);
-                  setIsDialogOpen(true); }} >
-                </BookCards> )}
-                ))} 
-        
-          
-         
-        </div>
-        {selectedBook && (
-        <BookDialog
-          isOpen={isDialogOpen}
-          book={selectedBook}
-          onClose={closeDialog}
-        />
-      )}
-          
-
-      
-        <div className={`flex items-center justify-center`}> {bookSearchResults.length === 0 && activeSearch && <h1 className={`${fredericka.className}`}> hmmm... it doesn't seem like we have a match. Try adding an author or changing your search 🔍 </h1>}</div>
-        
-      <div className={`flex items-center justify-center`}> {bookSearchResults.length > 0 && <h1 className={`${fredericka.className} `}>Looks like we’re out of books here… can't find what you need? Try adding an author or changing your search 🔍 </h1>}</div>
-        <div>
-      {/* this is conditional rendering */}
-            
-        </div>
-
-    </div>
-        
-    )
-}
-
-//for popups or dialog boxes with context specific content you need to 
-//start by making a state variable that indicates whether the box is open or not (boolean)
-//make a state variable with the content (ideally as a type object)
-//make a function that is used when the dialog box is closed that makes the content variable null and the open variable false
-
-//if the dialog opens when you click a componant you need to add an onclick variable to that componant (this is usually to the type that is used for the component)
-//when the componant is rendered assign the onclick varaible the set function for each of state variables (the content and the open one) with what you want them to set it to
-//then check if the conditions are right using conditional rendering and render the dialog box 
-

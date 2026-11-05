@@ -1,40 +1,17 @@
-'use client';
-import { useState } from "react";
-import { caveat } from "@/app/ui/fonts";
-
+"use client";
 
 export type bookAttributes = {
-    id?: string; 
-    title: string; 
-    author: string;
-    pages: string; 
-    coverUrl: string;
-    onClick?: () => void; }
+  id?: string;
+  title: string;
+  author: string;
+  pages: string;
+  coverUrl: string;
+  onClick?: () => void;
+};
 
-
-
-
-export default function BookCards ({title, author, coverUrl, onClick}: bookAttributes) {
-      const [isHovered, setIsHovered] = useState(false);
-      
-         return (
-       <div 
-       
-       onClick={onClick}
-       onMouseEnter={() => setIsHovered(true)}
-       onMouseLeave={() => setIsHovered(false)} 
-       style={
-        {transition: "transform 1s ease",}
-       }
-       className = {`w-[400px] p-4 bg-slate-100 rounded-md text-center text-lg font-semibold ${caveat.className} flex flex-col items-center mx-auto ${isHovered ? "shadow-2xl" : "shadow-lg"}`}>
-        <img className={`object-cover`} alt="book cover" src={`${coverUrl}`} />
-        <h1>{title}</h1>
-        <h2>{author}</h2>
-        
-
-       </div>
-    )
-
-
-   
+export default function BookCards({ title, author, pages, coverUrl, onClick }: bookAttributes) {
+  return <button type="button" onClick={onClick} className="result-card">
+    <img src={coverUrl} alt={`Cover of ${title}`} loading="lazy" />
+    <span className="result-card-copy"><strong>{title}</strong><span>{author}</span><small>{pages} pages</small></span>
+  </button>;
 }
