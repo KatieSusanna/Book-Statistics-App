@@ -2,8 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Search, X } from "lucide-react";
-import BookCards, { bookAttributes } from "@/app/ui/components/bookcards";
+import BookCards, { type bookAttributes } from "@/app/ui/components/bookcards";
 import BookDialog from "@/app/ui/components/bookInfoPage";
+import { useLibrary } from "@/app/ui/library";
 
 export default function BookTracker() {
   const [query, setQuery] = useState("");
@@ -11,6 +12,7 @@ export default function BookTracker() {
   const [selected, setSelected] = useState<bookAttributes | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { books, addBook } = useLibrary();
 
   useEffect(() => {
     const cleanQuery = query.trim();
@@ -49,6 +51,6 @@ export default function BookTracker() {
       <div className="results-heading"><h2>{query ? "Search results" : "A little inspiration"}</h2>{loading && <span className="loading-label">Searching…</span>}</div>
       {error ? <p className="search-state" role="alert">{error}</p> : results.length ? <div className="results-grid">{results.map((book) => <BookCards key={book.id} {...book} onClick={() => setSelected(book)} />)}</div> : <div className="search-state">{loading ? "Finding books for you…" : query ? "No matching books yet. Try a different title or author." : "Search for a title or author to get started."}</div>}
     </section>
-    {selected && <BookDialog isOpen book={selected} onClose={() => setSelected(null)} />}
+    {selected && <BookDialog isOpen book={selected} isSaved={books.some((book) => book.id === selected.id)} onAdd={() => addBook({ id: selected.id ?? `${selected.title}-${selected.author}`, title: selected.title, author: selected.author, pages: selected.pages === "Unknown" ? null : Number(selected.pages), coverUrl: selected.coverUrl })} onClose={() => setSelected(null)} />}
   </main>;
 }
